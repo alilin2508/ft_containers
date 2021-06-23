@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 12:13:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/06/21 18:25:31 by alilin           ###   ########.fr       */
+/*   Updated: 2021/06/23 11:28:39 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ namespace ft
 		Node(): p_prev(nullptr), data(), p_next(nullptr) {}
 		Node(T const &data):
 		p_prev(nullptr), data(data), p_next(nullptr) {}
-		Node(Node *prev, T const &data, Node *next):
-		p_prev(prev), data(data), p_next(next) {
+		Node(Node *prev, Node *next, T const &data):
+		p_prev(prev), p_next(next), data(data),{
 			prev->p_next = this;
 			next->p_prev = this;
 		}
