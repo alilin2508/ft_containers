@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/15 16:05:22 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/15 16:38:52 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,13 +242,13 @@ namespace ft
 		template <class InputIterator>
 		void assign(InputIterator first, InputIterator last)
 		{
-			difference_type diff = last - first;
+			size_type diff = last - first;
 			if (diff > _capacity)
 			{
 				pointer tmp = _alloc.allocate(diff);
-				for (iterator i = first; i != last; i++)
-					_alloc.construct(tmp + i, *i);
-				~vector();
+				for (InputIterator i = first; i != last; i++)
+					_alloc.construct(&tmp[i], &array[i]);
+				this->~vector();
 				this->array = tmp;
 				this->_capacity = diff;
 				this->_size = diff;
@@ -257,9 +257,9 @@ namespace ft
 			{
 				size_type current_capacity = this->_capacity;
 				pointer tmp = _alloc.allocate(this->_capacity);
-				for (iterator i = first; i != last; i++)
-					_alloc.construct(tmp + i, *i);
-				~vector();
+				for (InputIterator i = first; i != last; i++)
+					_alloc.construct(&tmp[i], &array[i]);
+				this->~vector();
 				this->array = tmp;
 				this->_capacity = current_capacity;
 				this->_size = diff;
@@ -330,7 +330,7 @@ namespace ft
 				{
 					if (i == position)
 					{
-						ret_pos = tmp.begin() + i;
+						ret_pos = begin() + i;
 						_alloc.construct(tmp + i++, val);
 					}
 					if (i != end())
@@ -417,7 +417,7 @@ namespace ft
 		template <class InputIterator>
 		void insert (iterator position, InputIterator first, InputIterator last)
 		{
-			difference_type diff = last - first;
+			size_type diff = last - first;
 			size_type new_size = _size + diff;
 			size_type new_capacity = 0;
 
@@ -438,7 +438,7 @@ namespace ft
 				{
 					if (i == position)
 					{
-						for (iterator j = first; j != last; j++)
+						for (InputIterator j = first; j != last; j++)
 							_alloc.construct(tmp + i++, *j);
 					}
 					if (i != end())
@@ -457,7 +457,7 @@ namespace ft
 				{
 					if (i == position)
 					{
-						for (iterator j = first; j != last; j++)
+						for (InputIterator j = first; j != last; j++)
 							_alloc.construct(tmp + i++, *j);
 					}
 					if (i != end())
@@ -485,7 +485,7 @@ namespace ft
 
 	iterator erase(iterator first, iterator last)
 	{
-		difference_type diff = last - first;
+		size_type diff = last - first;
 
 		for (iterator pos = first; pos != last; pos++)
 		{

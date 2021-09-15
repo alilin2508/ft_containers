@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 14:13:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/15 15:54:19 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/15 16:31:50 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ namespace ft
 
 		random_access_iterator &operator++(int)
 		{
-			random_access_iterator<T> tmp = *this;
+			random_access_iterator<T> tmp(*this);
 			_ptr++;
 			return (tmp);
 		}
@@ -114,7 +114,7 @@ namespace ft
 
 		random_access_iterator &operator--(int)
 		{
-			random_access_iterator<T> tmp = *this;
+			random_access_iterator<T> tmp(*this);
 			_ptr--;
 			return (tmp);
 		}

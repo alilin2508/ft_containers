@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 11:48:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/15 15:53:32 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/15 16:31:48 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ namespace ft
 
 		reverse_iterator &operator++(int)
 		{
-			reverse_iterator<Iter> tmp = *this;
+			reverse_iterator<Iter> tmp(*this);
 			_iter--;
 			return (tmp);
 		}
@@ -90,7 +90,7 @@ namespace ft
 
 		reverse_iterator &operator--(int)
 		{
-			reverse_iterator<Iter> tmp = *this;
+			reverse_iterator<Iter> tmp(*this);
 			_iter++;
 			return (tmp);
 		}
