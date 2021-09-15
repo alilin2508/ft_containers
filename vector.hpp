@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/15 15:17:28 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/15 15:42:01 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,11 +240,7 @@ namespace ft
 		template <class InputIterator>
 		void assign(InputIterator first, InputIterator last)
 		{
-			size_type diff = 0;
-			for(iterator tmp = first; tmp != last; tmp++)
-			{
-				diff++;
-			}
+			difference_type diff = last - first;
 			if (diff > capacity)
 			{
 				pointer tmp = _alloc.allocate(diff);
@@ -419,11 +415,7 @@ namespace ft
 		template <class InputIterator>
 		void insert (iterator position, InputIterator first, InputIterator last)
 		{
-			size_type diff = 0;
-			for(iterator tmp = first; tmp != last; tmp++)
-			{
-				diff++;
-			}
+			difference_type diff = last - first;
 			size_type new_size = size + diff;
 			size_type new_capacity = NULL;
 
@@ -476,7 +468,63 @@ namespace ft
 			}
 		}
 
-	
+	iterator erase(iterator position)
+	{
+		_alloc.destroy(&*position);
+
+		for (iterator pos = position; pos + 1 != end(); pos++)
+		{
+			_alloc.construct(&*pos, &*(pos + 1));
+			_alloc.destroy(&*(pos + 1));
+		}
+		size--;
+		return (position);
+	}
+
+	iterator erase(iterator first, iterator last)
+	{
+		difference_type diff = last - first;
+
+		for (iterator pos = first; pos != last; pos++)
+		{
+			_alloc.destroy(&*pos);
+		}
+		for (iterator pos = first; pos + diff != end(); pos++)
+		{
+			_alloc.construct(&*pos, &*(pos + diff));
+			_alloc.destroy(&*(pos + diff));
+		}
+		size -= diff;
+		return (first);
+	}
+
+	void swap(vector &x)
+	{
+		pointer tmp = array;
+		this->array = x.array;
+		x.array = tmp;
+
+		size_type tmp_size = size;
+		this->size = x.size;
+		x.size = tmp_size;
+
+		size_type tmp_capacity = capacity;
+		this->capacity = x.capacity;
+		x.capacity = tmp_capacity;
+	}
+
+	void clear()
+	{
+		while (!empty())
+			pop_back();
+	}
+
+	// ################ Allocator ################
+
+	allocator_type get_allocator() const
+	{
+		return (_alloc);
+	}
 
 	protected:
 
