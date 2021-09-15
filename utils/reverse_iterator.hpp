@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 11:48:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/14 11:48:10 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/15 15:53:32 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,6 @@ namespace ft
 	template<class Iter>
 	class reverse_iterator
 	{
-	protected:
-
-		iterator_type _iter;
-
 	public:
 
 		typedef Iter iterator_type;
@@ -114,6 +110,10 @@ namespace ft
 		{
 			return _iter[-n -1];
 		}
+
+	protected:
+
+		iterator_type _iter;
 	};
 
 	template <class Iterator>
