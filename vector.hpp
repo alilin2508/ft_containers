@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/14 16:48:25 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/15 12:18:03 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 #include "reverse_iterator.hpp"
 #include "random_access_iterator.hpp"
+
+#include <memory>
+#include <stdexcept>
 
 namespace ft
 {
@@ -81,14 +84,15 @@ namespace ft
 				return (*this);
 			~vector();
 			this->size = x.size;
-			this->capacity = x.capacity;
+			if (x.size > this->capacity)
+				this->capacity = x.size;
 			array = _alloc.allocate(size);
 			for (size_type i = 0; i < size; i++)
 				_alloc.construct(array + i, x.array[i]);
 			return (*this);
 		}
 
-		// #### Iterators: ####
+		// ################ Iterators ################
 
 		iterator begin()
 		{
@@ -137,7 +141,7 @@ namespace ft
 			return (const_reverse_iterator(_array));
 		}
 
-		// #### Capacity: ####
+		// ################ Capacity ################
 
 		size_type size() const
 		{
@@ -158,6 +162,10 @@ namespace ft
 			}
 			else if (n > this->size)
 			{
+				if (!capacity)
+					realloc(n);
+				else if (n > capacity)
+					realloc(n > (capacity * 2) ? n : capacity * 2);
 				while (size != n)
 					push_back(val);
 			}
@@ -173,20 +181,89 @@ namespace ft
 			return (size == 0);
 		}
 
-		void reserve (size_type n)
+		void reserve(size_type n)
 		{
+			if (n > max_size())
+				throw std::length_error("reserve:: cannot increase capacity beyond max_size");
 			if (n > capacity)
-			{
-				
-			}
+				realloc(n);
 		}
 
-	private:
+		// ################ Element access ################
+
+		reference operator[](size_type n)
+		{
+			return *(array + n);
+		}
+
+		const_reference operator[](size_type n) const
+		{
+			return *(array + n);
+		}
+
+		reference at(size_type n)
+		{
+			if (n >= size)
+				throw std::out_of_range("at:: out of range index");
+			return *(array + n);
+		}
+
+		const_reference at(size_type n) const
+		{
+			if (n >= size)
+				throw std::out_of_range("at:: out of range index");
+			return *(array + n);
+		}
+
+		reference front()
+		{
+			return *(array);
+		}
+
+		const_reference front() const
+		{
+			return *(array);
+		}
+
+		reference back()
+		{
+			return *(array + size - 1);
+		}
+
+		const_reference back() const
+		{
+			return *(array + size - 1);
+		}
+
+		// ################ Modifiers ################
+
+		template <class InputIterator>
+		void assign(InputIterator first, InputIterator last)
+		{
+
+		}
+
+		void assign(size_type n, const value_type& val)
+		{
+
+		}
+
+	protected:
 
 		allocator_type _alloc;
 		T* array;
 		size_type size;
 		size_type capacity;
+
+		void realloc(size_type n)
+		{
+			pointer tmp = _alloc.allocate(n);
+			for (size_type i = 0; i < this->size; i++)
+				_alloc.construct(tmp + i, this->array[i]);
+			~vector();
+			this->array = tmp;
+			this->capacity = n;
+		}
 	};
 }
 
