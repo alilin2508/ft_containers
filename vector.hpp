@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/15 16:38:52 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/16 14:58:44 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <iostream>
 
 #include <type_traits>
 
@@ -33,16 +34,16 @@ namespace ft
 		typedef typename allocator_type::const_reference const_reference;
 		typedef typename allocator_type::pointer pointer;
 		typedef typename allocator_type::const_pointer const_pointer;
-		// typedef typename allocator_type::difference_type difference_type;
-		// typedef typename allocator_type::size_type size_type;
+		typedef typename allocator_type::difference_type difference_type;
+		typedef typename allocator_type::size_type size_type;
 
 		typedef ft::random_access_iterator<value_type> iterator;
 		typedef ft::random_access_iterator<value_type const> const_iterator;
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-		typedef std::ptrdiff_t difference_type;
-		typedef std::size_t size_type;
+		// typedef std::ptrdiff_t difference_type;
+		// typedef std::size_t size_type;
 
 		explicit vector (const allocator_type &alloc = allocator_type()) : _alloc(alloc), array(NULL), _size(0), _capacity(0) {}
 		explicit vector (size_type n, const value_type &val = value_type(), const allocator_type &alloc = allocator_type()) : _alloc(alloc), array(NULL), _size(n), _capacity(n)
@@ -55,14 +56,17 @@ namespace ft
 		template <class InputIterator>
 		vector (InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = NULL) : _alloc(alloc), array(NULL), _size(0), _capacity(0)
 		{
-			for(InputIterator tmp = first; tmp != last; tmp++)
+			// difference_type diff = last - first;
+			size_type diff = 0;
+			for (InputIterator tmp = first; tmp != last; tmp++)
 			{
-				_size++;
+				diff++;
 			}
+			_size = diff;
 			_capacity = _size;
 			array = _alloc.allocate(_size);
-			for (InputIterator tmp = first; tmp != last; tmp++)
-				_alloc.construct(array + tmp, *tmp);
+			for (int i = 0; first != last; i++, first++)
+				_alloc.construct(array + i, *first);
 		}
 
 		vector (const vector &x) : _alloc(x._alloc), array(NULL), _size(x._size), _capacity(x._size)
@@ -84,8 +88,10 @@ namespace ft
 		{
 			if (this == &x)
 				return (*this);
+			size_type current_capacity = this->_capacity;
 			this->~vector();
 			this->_size = x._size;
+			this->_capacity = current_capacity;
 			if (x._size > this->_capacity)
 				this->_capacity = x._size;
 			array = _alloc.allocate(_size);
@@ -164,10 +170,10 @@ namespace ft
 			}
 			else if (n > this->_size)
 			{
-				if (!_capacity)
+				if (n > (_capacity * 2) || !_capacity)
 					realloc(n);
 				else if (n > _capacity)
-					realloc(n > (_capacity * 2) ? n : _capacity * 2);
+					realloc(_capacity * 2);
 				while (_size != n)
 					push_back(val);
 			}
@@ -240,29 +246,28 @@ namespace ft
 		// ################ Modifiers ################
 
 		template <class InputIterator>
-		void assign(InputIterator first, InputIterator last)
+		void assign(typename std::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
 		{
-			size_type diff = last - first;
+			// difference_type diff = last - first;
+			size_type diff = 0;
+			for (InputIterator tmp = first; tmp != last; tmp++)
+			{
+				diff++;
+			}
 			if (diff > _capacity)
 			{
-				pointer tmp = _alloc.allocate(diff);
-				for (InputIterator i = first; i != last; i++)
-					_alloc.construct(&tmp[i], &array[i]);
 				this->~vector();
-				this->array = tmp;
+				this->_size = 0;
 				this->_capacity = diff;
-				this->_size = diff;
+				this->array = _alloc.allocate(_capacity);
+				while (first != last)
+					_alloc.construct(array + _size++, *first++);
 			}
 			else
 			{
-				size_type current_capacity = this->_capacity;
-				pointer tmp = _alloc.allocate(this->_capacity);
-				for (InputIterator i = first; i != last; i++)
-					_alloc.construct(&tmp[i], &array[i]);
-				this->~vector();
-				this->array = tmp;
-				this->_capacity = current_capacity;
-				this->_size = diff;
+				clear();
+				while (first != last)
+					_alloc.construct(array + _size++, *first++);
 			}
 		}
 
@@ -270,30 +275,24 @@ namespace ft
 		{
 			if (n > _capacity)
 			{
-				pointer tmp = _alloc.allocate(n);
-				for (size_type i = 0; i < n; i++)
-					_alloc.construct(tmp + i, val);
-				~vector();
-				this->array = tmp;
+				this->~vector();
+				this->_size = 0;
 				this->_capacity = n;
-				this->_size = n;
+				this->array = _alloc.allocate(_capacity);
+				while (_size < n)
+					_alloc.construct(array + _size++, val);
 			}
 			else
 			{
-				size_type current_capacity = this->_capacity;
-				pointer tmp = _alloc.allocate(this->_capacity);
-				for (size_type i = 0; i < n; i++)
-					_alloc.construct(tmp + i, val);
-				~vector();
-				this->array = tmp;
-				this->_capacity = current_capacity;
-				this->_size = n;
+				clear();
+				while (_size < n)
+					_alloc.construct(array + _size++, val);
 			}
 		}
 
 		void push_back(const value_type &val)
 		{
-			if (empty())
+			if (!_capacity)
 				realloc(1);
 			if (_size == _capacity)
 				realloc(_capacity * 2);
@@ -309,165 +308,51 @@ namespace ft
 
 		iterator insert(iterator position, const value_type &val)
 		{
-			size_type new_size = _size + 1;
-			iterator ret_pos = position;
-			size_type new_capacity = 0;
+			difference_type idx = position - begin();
 
-			if (new_size > _capacity)
-			{
-				if (!_capacity)
-				{
-					realloc(new_size);
-					new_capacity = new_size;
-				}
-				else
-				{
-					realloc(new_size > (_capacity * 2) ? new_size : _capacity * 2);
-					new_capacity = (new_size > (_capacity * 2) ? new_size : _capacity * 2);
-				}
-				pointer tmp = _alloc.allocate(new_capacity);
-				for (iterator i = begin(); i != end(); i++)
-				{
-					if (i == position)
-					{
-						ret_pos = begin() + i;
-						_alloc.construct(tmp + i++, val);
-					}
-					if (i != end())
-							_alloc.construct(tmp + i, *i);
-				}
-				~vector();
-				this->array = tmp;
-				this->_capacity = new_capacity;
-				this->_size = new_size;
-			}
-			else
-			{
-				size_type current_capacity = this->_capacity;
-				pointer tmp = _alloc.allocate(current_capacity);
-				for (iterator i = begin(); i != end(); i++)
-				{
-					if (i == position)
-						_alloc.construct(tmp + i++, val);
-					if (i != end())
-							_alloc.construct(tmp + i, *i);
-				}
-				~vector();
-				this->array = tmp;
-				this->_capacity = current_capacity;
-				this->_size = new_size;
-			}
-			return (ret_pos);
+			insert(position, 1, val);
+			return (iterator(this->begin() + idx));
 		}
 
 		void insert(iterator position, size_type n, const value_type &val)
 		{
-			size_type new_size = _size + n;
-			size_type new_capacity = 0;
+			difference_type const pos_diff = position - begin();
+			difference_type const old_end_diff = end() - begin();
+			iterator old_end;
+			iterator new_end;
 
-			if (new_size > _capacity)
-			{
-				if (!_capacity)
-				{
-					realloc(new_size);
-					new_capacity = new_size;
-				}
-				else
-				{
-					realloc(new_size > (_capacity * 2) ? new_size : _capacity * 2);
-					new_capacity = (new_size > (_capacity * 2) ? new_size : _capacity * 2);
-				}
-				pointer tmp = _alloc.allocate(new_capacity);
-				for (iterator i = begin(); i != end(); i++)
-				{
-					if (i == position)
-					{
-						for (size_type j = 0; j < n; j++)
-							_alloc.construct(tmp + i++, val);
-					}
-					if (i != end())
-						_alloc.construct(tmp + i, *i);
-				}
-				~vector();
-				this->array = tmp;
-				this->_capacity = new_capacity;
-				this->_size = new_size;
-			}
-			else
-			{
-				size_type current_capacity = this->_capacity;
-				pointer tmp = _alloc.allocate(current_capacity);
-				for (iterator i = begin(); i != end(); i++)
-				{
-					if (i == position)
-					{
-						for (size_type j = 0; j < n; j++)
-							_alloc.construct(tmp + i++, val);
-					}
-					if (i != end())
-						_alloc.construct(tmp + i, *i);
-				}
-				~vector();
-				this->array = tmp;
-				this->_capacity = current_capacity;
-				this->_size = new_size;
-			}
+			resize(this->_size + n);
+			new_end = end();
+			position = begin() + pos_diff;
+			old_end = begin() + old_end_diff;
+			while (old_end != position)
+				*--new_end = *--old_end;
+			while (n-- > 0)
+				*position++ = val;
 		}
 
 		template <class InputIterator>
-		void insert (iterator position, InputIterator first, InputIterator last)
+		void insert (iterator position, typename std::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
 		{
-			size_type diff = last - first;
-			size_type new_size = _size + diff;
-			size_type new_capacity = 0;
+			size_type n = 0;
+			for (InputIterator tmp = first; tmp != last; tmp++)
+			{
+				n++;
+			}
+			// difference_type const n = last - first;
+			difference_type const pos_diff = position - begin();
+			difference_type const old_end_diff = end() - begin();
+			iterator old_end;
+			iterator new_end;
 
-			if (new_size > _capacity)
-			{
-				if (!_capacity)
-				{
-					realloc(new_size);
-					new_capacity = new_size;
-				}
-				else
-				{
-					realloc(new_size > (_capacity * 2) ? new_size : _capacity * 2);
-					new_capacity = (new_size > (_capacity * 2) ? new_size : _capacity * 2);
-				}
-				pointer tmp = _alloc.allocate(new_capacity);
-				for (iterator i = begin(); i != end(); i++)
-				{
-					if (i == position)
-					{
-						for (InputIterator j = first; j != last; j++)
-							_alloc.construct(tmp + i++, *j);
-					}
-					if (i != end())
-						_alloc.construct(tmp + i, *i);
-				}
-				~vector();
-				this->array = tmp;
-				this->_capacity = new_capacity;
-				this->_size = new_size;
-			}
-			else
-			{
-				size_type current_capacity = this->_capacity;
-				pointer tmp = _alloc.allocate(current_capacity);
-				for (iterator i = begin(); i != end(); i++)
-				{
-					if (i == position)
-					{
-						for (InputIterator j = first; j != last; j++)
-							_alloc.construct(tmp + i++, *j);
-					}
-					if (i != end())
-						_alloc.construct(tmp + i, *i);
-				}
-				~vector();
-				this->array = tmp;
-				this->_capacity = current_capacity;
-				this->_size = new_size;
-			}
+			resize(this->_size + n);
+			new_end = end();
+			position = begin() + pos_diff;
+			old_end = begin() + old_end_diff;
+			while (old_end != position)
+				*--new_end = *--old_end;
+			while (first != last)
+				*position++ = *first++;
 		}
 
 	iterator erase(iterator position)
@@ -476,7 +361,7 @@ namespace ft
 
 		for (iterator pos = position; pos + 1 != end(); pos++)
 		{
-			_alloc.construct(&*pos, &*(pos + 1));
+			_alloc.construct(&*pos, *(pos + 1));
 			_alloc.destroy(&*(pos + 1));
 		}
 		_size--;
@@ -485,7 +370,11 @@ namespace ft
 
 	iterator erase(iterator first, iterator last)
 	{
-		size_type diff = last - first;
+		size_type diff = 0;
+		for (iterator tmp = first; tmp != last; tmp++)
+		{
+			diff++;
+		}
 
 		for (iterator pos = first; pos != last; pos++)
 		{
@@ -493,7 +382,7 @@ namespace ft
 		}
 		for (iterator pos = first; pos + diff != end(); pos++)
 		{
-			_alloc.construct(&*pos, &*(pos + diff));
+			_alloc.construct(&*pos, *(pos + diff));
 			_alloc.destroy(&*(pos + diff));
 		}
 		_size -= diff;
@@ -538,10 +427,12 @@ namespace ft
 		void realloc(size_type n)
 		{
 			pointer tmp = _alloc.allocate(n);
+			size_type current_size = this->_size;
 			for (size_type i = 0; i < this->_size; i++)
 				_alloc.construct(tmp + i, this->array[i]);
 			this->~vector();
 			this->array = tmp;
+			this->_size = current_size;
 			this->_capacity = n;
 		}
 	};

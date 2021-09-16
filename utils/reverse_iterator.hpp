@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 11:48:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/15 16:31:48 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/16 14:18:29 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ namespace ft
 			return (*this);
 		}
 
-		reverse_iterator &operator++(int)
+		reverse_iterator operator++(int)
 		{
 			reverse_iterator<Iter> tmp(*this);
 			_iter--;
@@ -88,7 +88,7 @@ namespace ft
 			return (*this);
 		}
 
-		reverse_iterator &operator--(int)
+		reverse_iterator operator--(int)
 		{
 			reverse_iterator<Iter> tmp(*this);
 			_iter++;
@@ -196,6 +196,18 @@ namespace ft
 
 	template <class Iterator>
 	typename reverse_iterator<Iterator>::difference_type operator-(const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator> &rhs)
+	{
+		return (lhs.base() - rhs.base());
+	}
+
+	template <class Iterator, class Iter>
+	reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iter> &rev_it)
+	{
+		return (rev_it + n);
+	}
+
+	template <class Iterator, class Iter>
+	typename reverse_iterator<Iterator>::difference_type operator-(const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iter> &rhs)
 	{
 		return (lhs.base() - rhs.base());
 	}

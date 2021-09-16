@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 14:13:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/15 16:31:50 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/16 13:51:02 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #include <iterator>
 #include <cstddef>
+
+#include "iterator_traits.hpp"
 
 namespace ft
 {
@@ -33,7 +35,7 @@ namespace ft
 		typedef T& reference;
 		typedef const T* const_pointer;
 		typedef const T& const_reference;
-		typedef std::random_access_iterator_tag iterator_category;
+		typedef ft::random_access_iterator_tag iterator_category;
 
 		random_access_iterator() : _ptr(NULL) {}
 		random_access_iterator(pointer ptr) : _ptr(ptr) {}
@@ -46,6 +48,13 @@ namespace ft
 			return (*this);
 		}
 		virtual ~random_access_iterator() {}
+
+		// Overload called when trying to copy construct a const_iterator
+		// based on an iterator
+		operator random_access_iterator<value_type const>() const
+		{
+			return random_access_iterator<value_type const>(_ptr);
+		}
 
 		template<class Iterator>
 		friend bool operator==(ft::random_access_iterator<Iterator> const &lhs, ft::random_access_iterator<Iterator> const &rhs);
@@ -99,7 +108,7 @@ namespace ft
 			return (*this);
 		}
 
-		random_access_iterator &operator++(int)
+		random_access_iterator operator++(int)
 		{
 			random_access_iterator<T> tmp(*this);
 			_ptr++;
@@ -112,7 +121,7 @@ namespace ft
 			return (*this);
 		}
 
-		random_access_iterator &operator--(int)
+		random_access_iterator operator--(int)
 		{
 			random_access_iterator<T> tmp(*this);
 			_ptr--;
