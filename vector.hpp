@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/16 14:58:44 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/21 11:04:35 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 
 #include <memory>
 #include <stdexcept>
-#include <iostream>
 
 #include <type_traits>
 
@@ -42,9 +41,6 @@ namespace ft
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-		// typedef std::ptrdiff_t difference_type;
-		// typedef std::size_t size_type;
-
 		explicit vector (const allocator_type &alloc = allocator_type()) : _alloc(alloc), array(NULL), _size(0), _capacity(0) {}
 		explicit vector (size_type n, const value_type &val = value_type(), const allocator_type &alloc = allocator_type()) : _alloc(alloc), array(NULL), _size(n), _capacity(n)
 		{
@@ -56,7 +52,6 @@ namespace ft
 		template <class InputIterator>
 		vector (InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = NULL) : _alloc(alloc), array(NULL), _size(0), _capacity(0)
 		{
-			// difference_type diff = last - first;
 			size_type diff = 0;
 			for (InputIterator tmp = first; tmp != last; tmp++)
 			{
@@ -248,7 +243,6 @@ namespace ft
 		template <class InputIterator>
 		void assign(typename std::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
 		{
-			// difference_type diff = last - first;
 			size_type diff = 0;
 			for (InputIterator tmp = first; tmp != last; tmp++)
 			{
@@ -339,7 +333,6 @@ namespace ft
 			{
 				n++;
 			}
-			// difference_type const n = last - first;
 			difference_type const pos_diff = position - begin();
 			difference_type const old_end_diff = end() - begin();
 			iterator old_end;
