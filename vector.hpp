@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/21 11:04:35 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/21 15:27:50 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,13 @@
 
 #include "./utils/reverse_iterator.hpp"
 #include "./utils/random_access_iterator.hpp"
+#include "./utils/enable_if.hpp"
+#include "./utils/equal.hpp"
+#include "./utils/is_integral.hpp"
+#include "./utils/lexicographical_compare.hpp"
 
 #include <memory>
 #include <stdexcept>
-
 #include <type_traits>
 
 namespace ft
@@ -50,7 +53,7 @@ namespace ft
 			_size = n;
 		}
 		template <class InputIterator>
-		vector (InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = NULL) : _alloc(alloc), array(NULL), _size(0), _capacity(0)
+		vector (InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) : _alloc(alloc), array(NULL), _size(0), _capacity(0)
 		{
 			size_type diff = 0;
 			for (InputIterator tmp = first; tmp != last; tmp++)
@@ -241,7 +244,7 @@ namespace ft
 		// ################ Modifiers ################
 
 		template <class InputIterator>
-		void assign(typename std::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
+		void assign(typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
 		{
 			size_type diff = 0;
 			for (InputIterator tmp = first; tmp != last; tmp++)
@@ -326,7 +329,7 @@ namespace ft
 		}
 
 		template <class InputIterator>
-		void insert (iterator position, typename std::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
+		void insert (iterator position, typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
 		{
 			size_type n = 0;
 			for (InputIterator tmp = first; tmp != last; tmp++)
@@ -429,6 +432,50 @@ namespace ft
 			this->_capacity = n;
 		}
 	};
+
+	template <class T, class Alloc>
+  bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return (false);
+		return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
+
+	template <class T, class Alloc>
+  bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (!(lhs == rhs));
+	}
+
+	template <class T, class Alloc>
+  bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template <class T, class Alloc>
+  bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (rhs < lhs);
+	}
+
+	template <class T, class Alloc>
+  bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (!(rhs < lhs));
+	}
+
+	template <class T, class Alloc>
+  bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (!(lhs < rhs));
+	}
+
+	template <class T, class Alloc>
+  void swap(vector<T,Alloc> &x, vector<T,Alloc> &y)
+	{
+		x.swap(y);
+	}
 }
 
 #endif

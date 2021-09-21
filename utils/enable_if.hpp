@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 11:17:39 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/21 11:45:14 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/21 15:29:18 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 namespace ft
 {
+	template<bool B, class T = void>
+	struct enable_if {};
+
 	template <class T>
 	struct enable_if<true, T> { typedef T type; };
 }
