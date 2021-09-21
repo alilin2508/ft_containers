@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 12:09:06 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/21 14:59:38 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/21 15:41:05 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ namespace ft
 		first_type first;
 		second_type second;
 
-		pair() : first(first_type()), second(second_type()) {};
+		pair() : first(first_type()), second(second_type()) {}
 
-		pair(const first_type &x, const second_type &y) : first(x), second(y) {};
+		pair(const first_type &x, const second_type &y) : first(x), second(y) {}
 
 		template< class U1, class U2 >
-		pair(const pair<U1, U2> &p) : first(p.first), second(p.second) {};
+		pair(const pair<U1, U2> &p) : first(p.first), second(p.second) {}
 
-		pair &operator=(const pair &other);
+		pair &operator=(const pair &other)
 		{
 			this->first = other.first;
 			this->second = other.second;
