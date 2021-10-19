@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/18 15:19:05 by alilin           ###   ########.fr       */
+/*   Updated: 2021/09/21 15:27:50 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -416,7 +416,7 @@ namespace ft
 	protected:
 
 		allocator_type _alloc;
-		value_type* array;
+		T* array;
 		size_type _size;
 		size_type _capacity;
 

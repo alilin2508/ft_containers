@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/18 17:33:32 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/19 15:43:56 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ namespace ft
 		value_type data;
 		color color;
 
-		Node(value_type data, Node* parent, Node* left, Node* right,calor color): data(data), parent(parent), left(left), right(right), color(color) {}
+		// Node(value_type data, Node* parent, Node* left, Node* right,calor color): data(data), parent(parent), left(left), right(right), color(color) {}
 	};
 
 	template <class Key, class T, class Compare = std::less<Key> >
@@ -111,41 +111,38 @@ namespace ft
 		// node->color = 1;
 		// new node must be red
 
-		node_ptr y = NULL;
-		node_ptr x = this->root;
+			node_ptr y = NULL;
+			node_ptr x = this->root;
 
-		while (x != _nil)
-		{
-			y = x;
-			if (_comp(get_key_from_val(node->data), get_key_from_val(x->data)))
-				x = x->left;
+			while (x != _nil)
+			{
+				y = x;
+				if (_comp(get_key_from_val(node->data), get_key_from_val(x->data)))
+					x = x->left;
+				else
+					x = x->right;
+			}
+			node->parent = y;
+			if (y == NULL)
+				this->root = node;
+			else if (_comp(get_key_from_val(node->data), get_key_from_val(y->data)))
+				y->left = node;
 			else
-				x = x->right;
+				y->right = node;
+			// if new node is a root node, simply return
+			if (node->parent == NULL)
+			{
+				node->color = black;
+				return;
+			}
+			// if the grandparent is null, simply return
+			if (node->parent->parent == NULL)
+			{
+				return;
+			}
+			// Fix the tree
+			fixInsert(node);
 		}
-
-		node->parent = y;
-		if (y == NULL)
-			this->root = node;
-		else if (_comp(get_key_from_val(node->data), get_key_from_val(y->data)))
-			y->left = node;
-		else
-			y->right = node;
-
-		// if new node is a root node, simply return
-		if (node->parent == NULL)
-		{
-			node->color = black;
-			return;
-		}
-
-		// if the grandparent is null, simply return
-		if (node->parent->parent == NULL) {
-			return;
-		}
-
-		// Fix the tree
-		fixInsert(node);
-	}
 
 	protected:
 
@@ -158,97 +155,63 @@ namespace ft
 			node_ptr u;
 			while (z->parent->color == red)
 			{
-				if (k->parent == k->parent->parent->right)
+				if (z->parent == z->parent->parent->right) // parent is gp's right child
 				{
-					u = k->parent->parent->left; // uncle
-					if (u->color == 1)
+					u = z->parent->parent->left; // uncle is left
+					if (u->color == red) // if uncle also red
 					{
-						// case 3.1
-						u->color = 0;
-						k->parent->color = 0;
-						k->parent->parent->color = 1;
-						k = k->parent->parent;
+						u->color = black;
+						z->parent->color = black;
+						z->parent->parent->color = red;
+						z = z->parent->parent;
 					}
 					else
 					{
-						if (k == k->parent->left)
+						if (z == z->parent->left) // z is left child
 						{
-							// case 3.2.2
-							k = k->parent;
-							right_rotate(k);
+							z = z->parent;
+							right_rotate(z); // new z is old parent
 						}
 						// case 3.2.1
-						k->parent->color = 0;
-						k->parent->parent->color = 1;
-						left_rotate(k->parent->parent);
+						z->parent->color = black;
+						z->parent->parent->color = red;
+						left_rotate(z->parent->parent);
 					}
 				}
-				else
+				else // parent is gp's left child
 				{
-					u = k->parent->parent->right; // uncle
-
-					if (u->color == 1)
+					u = z->parent->parent->right; // uncle
+					if (u->color == red)
 					{
-					// mirror case 3.1
-						u->color = 0;
-						k->parent->color = 0;
-						k->parent->parent->color = 1;
-						k = k->parent->parent;
+					// mirror case
+						u->color = black;
+						z->parent->color = black;
+						z->parent->parent->color = red;
+						z = z->parent->parent;
 					}
 					else
 					{
-						if (k == k->parent->right)
+						if (z == z->parent->right)
 						{
-							// mirror case 3.2.2
-							k = k->parent;
+							// mirror case
+							z = z->parent;
 							left_rotate(k);
 						}
-					// mirror case 3.2.1
-						k->parent->color = 0;
-						k->parent->parent->color = 1;
+						// mirror case
+						z->parent->color = black;
+						z->parent->parent->color = red;
 						right_rotate(k->parent->parent);
 					}
 				}
-			if (k == root)
-			{
-				break;
+				if (z == root)
+				{
+					break;
+				}
 			}
+			root->color = black;
 		}
-		root->color = noir;
-	}
-		}
+
 	};
-
-
-
-	// Node* parent(Node *n) { return (n->parent); }
-	//
-	// Node* grandparent(Node *n)
-	// {
-	// 	Node* p = n->parent;
-	//
-	// 	if (p == NULL)
-	// 		return (NULL);
-	// 	return (parent(p));
-	// }
-	//
-	// Node* brother(Node* n)
-	// {
-	// 	Node* p = n->parent;
-	//
-	// 	if (p == NULL)
-	// 		return (NULL);
-	// 	if (n == p->left)
-	// 		return (p->right);
-	// 	else
-	// 		return (p->left);
-	// }
-	//
-	// Node* uncle(Node* n)
-	// {
-	//
-	// }
-
 }
 
 #endif
