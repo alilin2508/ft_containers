@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/20 15:35:01 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/20 16:20:22 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,24 +40,26 @@ namespace ft
 		Node(value_type data, Node* parent, Node* left, Node* right,calor color): data(data), parent(parent), left(left), right(right), color(color) {}
 	};
 
-	template <class Key, class T, class Compare = std::less<Key>, >
+	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > >
 	class RBtree
 	{
 	public:
 
 		typedef T value_type;
 		typedef Key key_type;
-		typedef Node<value_type>* node_ptr;
 		typedef Compare Key_compare;
+		typedef Alloc allocator_type;
+		typedef Node<value_type>* node_ptr;
 
-		RBTree()
-		{
-			_nil = new Node;
-			_nil->color = black;
-			_nil->left = NULL;
-			_nil->right = NULL;
-			root = _nil;
-		}
+
+		// RBTree() // init with those values
+		// {
+		// 	_nil = new Node;
+		// 	_nil->color = black;
+		// 	_nil->left = NULL;
+		// 	_nil->right = NULL;
+		// 	root = _nil;
+		// }
 
 		node_pointer getRoot()
 		{
@@ -120,12 +122,12 @@ namespace ft
 
 		void insert(Node node)
 		{
-		// Ordinary Binary Search Insertion
+		// init with those values
 		// node->parent = nullptr;
 		// node->data = key;
 		// node->left = TNULL;
 		// node->right = TNULL;
-		// node->color = 1;
+		// node->color = red;
 		// new node must be red
 
 			node_ptr y = NULL;
@@ -171,6 +173,7 @@ namespace ft
 		node_ptr _root;
 		node_ptr _nil;
 		Key_compare _comp;
+		allocator_type _alloc;
 
 		fixInsert(node_ptr z)
 		{
@@ -243,6 +246,90 @@ namespace ft
 			v->parent = u->parent;
 		}
 
+		// fix the rb tree modified by the delete operation
+		void fixDelete(node_ptr x)
+		{
+			node_ptr s;
+			while (x != root && x->color == 0)
+			{
+				if (x == x->parent->left)
+				{
+					s = x->parent->right;
+					if (s->color == 1)
+					{
+						// case 3.1
+						s->color = 0;
+						x->parent->color = 1;
+						leftRotate(x->parent);
+						s = x->parent->right;
+					}
+
+					if (s->left->color == 0 && s->right->color == 0)
+					{
+						// case 3.2
+						s->color = 1;
+						x = x->parent;
+					}
+					else
+					{
+						if (s->right->color == 0)
+						{
+							// case 3.3
+							s->left->color = 0;
+							s->color = 1;
+							rightRotate(s);
+							s = x->parent->right;
+						}
+
+						// case 3.4
+						s->color = x->parent->color;
+						x->parent->color = 0;
+						s->right->color = 0;
+						leftRotate(x->parent);
+						x = root;
+					}
+				}
+				else
+				{
+					s = x->parent->left;
+					if (s->color == 1)
+					{
+						// case 3.1
+						s->color = 0;
+						x->parent->color = 1;
+						rightRotate(x->parent);
+						s = x->parent->left;
+					}
+
+					if (s->right->color == 0 && s->right->color == 0)
+					{
+						// case 3.2
+						s->color = 1;
+						x = x->parent;
+					}
+					else
+					{
+						if (s->left->color == 0)
+						{
+							// case 3.3
+							s->right->color = 0;
+							s->color = 1;
+							leftRotate(s);
+							s = x->parent->left;
+						}
+
+						// case 3.4
+						s->color = x->parent->color;
+						x->parent->color = 0;
+						s->left->color = 0;
+						rightRotate(x->parent);
+						x = root;
+					}
+				}
+			}
+			x->color = 0;
+		}
+
 		void deleteNodeHelper(node_ptr node, key_type key)
 		{
 			// find the node containing key
@@ -294,7 +381,8 @@ namespace ft
 				y->left->parent = y;
 				y->color = z->color; // we keep the old z color
 			}
-			delete z;
+			_alloc.destroy(z);
+			_alloc.deallocate(z, 1);
 			if (y_og_color == black)
 				fixDelete(x);
 		}
