@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 14:13:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/16 13:51:02 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/22 16:18:56 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ namespace ft
 		typedef T& reference;
 		typedef const T* const_pointer;
 		typedef const T& const_reference;
-		typedef ft::random_access_iterator_tag iterator_category;
+		typedef std::random_access_iterator_tag iterator_category;
 
 		random_access_iterator() : _ptr(NULL) {}
 		random_access_iterator(pointer ptr) : _ptr(ptr) {}

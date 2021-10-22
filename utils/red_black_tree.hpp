@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/22 14:57:49 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/22 16:39:09 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,8 @@ namespace ft
 		Key_compare _comp;
 		allocator_type _alloc;
 		size_type _size;
+
+		virtual	key_type get_key_from_val(value_type const& val) const = 0;
 
 		void fixInsert(node_ptr z)
 		{
