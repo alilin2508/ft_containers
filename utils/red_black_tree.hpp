@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/21 16:25:06 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/22 14:57:49 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,65 @@ namespace ft
 		void deleteNode(key_type key)
 		{
 			deleteNodeHelper(this->_root, key);
+		}
+
+		// Pre-Order ou prefixe
+		void preorder()
+		{
+			preOrderHelper(this->_root);
+		}
+
+		// In-Order ou infixe
+		void inorder()
+		{
+			inOrderHelper(this->_root);
+		}
+
+		// Post-Order ou postfixe
+		void postorder()
+		{
+			postOrderHelper(this->_root);
+		}
+
+		// search the tree for the key k and return the corresponding node
+		node_ptr searchTree(key_type k)
+		{
+			return searchTreeHelper(this->_root, k);
+		}
+
+		// find the successor of a given node
+		node_ptr successor(node_ptr x)
+		{
+			// if the right subtree is not null the successor is the leftmost node in the sright subtree
+			if (x->right != _nil)
+			{
+				return minimum(x->right);
+			}
+			// else it is the lowest ancestor of x whose left child is also an ancestor of x
+			node_ptr y = x->parent;
+			while (y != _nil && x == y->right)
+			{
+				x = y;
+				y = y->parent;
+			}
+			return y;
+		}
+
+		// find the predecessor of a given node
+		node_ptr predecessor(node_ptr x)
+		{
+			// if the left subtree is not null the predecessor is the rightmost node in the left subtree
+			if (x->left != _nil)
+			{
+				return maximum(x->left);
+			}
+			node_ptr y = x->parent;
+			while (y != _nil && x == y->left)
+			{
+				x = y;
+				y = y->parent;
+			}
+			return y;
 		}
 
 	protected:
@@ -404,6 +463,45 @@ namespace ft
 			_alloc.deallocate(node, 1);
 
 			_size--;
+		}
+
+		void preOrderHelper(node_ptr node)
+		{
+			if (node != _nil)
+			{
+				std::cout << node->data << " ";
+				preOrderHelper(node->left);
+				preOrderHelper(node->right);
+			}
+		}
+
+		void inOrderHelper(node_ptr node)
+		{
+			if (node != _nil)
+			{
+				inOrderHelper(node->left);
+				std::cout << node->data << " ";
+				inOrderHelper(node->right);
+			}
+		}
+
+		void postOrderHelper(node_ptr node)
+		{
+			if (node != _nil)
+			{
+				postOrderHelper(node->left);
+				postOrderHelper(node->right);
+				std::cout << node->data << " ";
+			}
+		}
+
+		node_ptr searchTreeHelper(node_ptr node, key_type key)
+		{
+			if (node == _nil || key == node->data)
+				return node;
+			if (key < node->data)
+				return searchTreeHelper(node->left, key);
+			return searchTreeHelper(node->right, key);
 		}
 	};
 }
