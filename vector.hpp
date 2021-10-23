@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/21 15:27:50 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/23 02:46:07 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 
 #include <memory>
 #include <stdexcept>
-#include <type_traits>
 
 namespace ft
 {

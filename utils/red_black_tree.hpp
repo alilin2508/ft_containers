@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/23 02:19:49 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/23 03:05:51 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ namespace ft
 
 		typedef T value_type;
 		typedef Key key_type;
-		typedef Compare Key_compare;
+		typedef Compare key_compare;
 		typedef Alloc allocator_type;
 
 		typedef Node<value_type> node_type;
@@ -56,7 +56,7 @@ namespace ft
 		typedef std::size_t size_type;
 
 
-		RBTree(const Key_compare &comp = Key_compare(), const allocator_type &alloc = allocator_type()): _comp(comp), _alloc(alloc), _size(0)
+		RBTree(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): _comp(comp), _alloc(alloc), _size(0)
 		{
 			_nil = _alloc.allocate(1);
 			_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
@@ -223,7 +223,7 @@ namespace ft
 
 		node_ptr _root;
 		node_ptr _nil;
-		Key_compare _comp;
+		key_compare _comp;
 		allocator_type _alloc;
 		size_type _size;
 
