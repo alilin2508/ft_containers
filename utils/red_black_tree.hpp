@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/22 16:39:09 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/23 02:19:49 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,24 +176,6 @@ namespace ft
 		void deleteNode(key_type key)
 		{
 			deleteNodeHelper(this->_root, key);
-		}
-
-		// Pre-Order ou prefixe
-		void preorder()
-		{
-			preOrderHelper(this->_root);
-		}
-
-		// In-Order ou infixe
-		void inorder()
-		{
-			inOrderHelper(this->_root);
-		}
-
-		// Post-Order ou postfixe
-		void postorder()
-		{
-			postOrderHelper(this->_root);
 		}
 
 		// search the tree for the key k and return the corresponding node
@@ -465,36 +447,6 @@ namespace ft
 			_alloc.deallocate(node, 1);
 
 			_size--;
-		}
-
-		void preOrderHelper(node_ptr node)
-		{
-			if (node != _nil)
-			{
-				std::cout << node->data << " ";
-				preOrderHelper(node->left);
-				preOrderHelper(node->right);
-			}
-		}
-
-		void inOrderHelper(node_ptr node)
-		{
-			if (node != _nil)
-			{
-				inOrderHelper(node->left);
-				std::cout << node->data << " ";
-				inOrderHelper(node->right);
-			}
-		}
-
-		void postOrderHelper(node_ptr node)
-		{
-			if (node != _nil)
-			{
-				postOrderHelper(node->left);
-				postOrderHelper(node->right);
-				std::cout << node->data << " ";
-			}
 		}
 
 		node_ptr searchTreeHelper(node_ptr node, key_type key)

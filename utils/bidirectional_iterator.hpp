@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:20:14 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/22 17:07:51 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/23 02:37:58 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,6 @@ namespace ft
 	template<class Node>
 	class bidirectional_iterator
 	{
-	protected:
-
-		Node _root;
-		Node _nil;
-		Node *_ptr;
-
 	public:
 
 		typedef std::ptrdiff_t difference_type;
@@ -88,30 +82,90 @@ namespace ft
 
 		bidirectional_iterator &operator++()
 		{
-			_ptr++;
+			if (_ptr != _nil)
+				_ptr = successor(_ptr);
 			return (*this);
 		}
 
 		bidirectional_iterator operator++(int)
 		{
 			bidirectional_iterator<T> tmp(*this);
-			_ptr++;
+			operator++();
 			return (tmp);
 		}
 
 		bidirectional_iterator &operator--()
 		{
-			_ptr--;
+			if (_ptr == _nil)
+				_ptr = maximum(_root);
+			else
+				_ptr = predecessor(_ptr);
 			return (*this);
 		}
 
 		bidirectional_iterator operator--(int)
 		{
 			bidirectional_iterator<T> tmp(*this);
-			_ptr--;
+			operator--();
 			return (tmp);
 		}
 
+	protected:
+
+		Node _root;
+		Node _nil;
+		Node *_ptr;
+
+		// find the node with the minimum key
+		node_ptr minimum(node_ptr node)
+		{
+			while (node->left != TNULL)
+				node = node->left;
+			return node;
+		}
+
+		// find the node with the maximum key
+		node_ptr maximum(node_ptr node)
+		{
+			while (node->right != TNULL)
+				node = node->right;
+			return node;
+		}
+
+		// find the successor of a given node
+		node_ptr successor(node_ptr x)
+		{
+			// if the right subtree is not null the successor is the leftmost node in the sright subtree
+			if (x->right != _nil)
+			{
+				return minimum(x->right);
+			}
+			// else it is the lowest ancestor of x whose left child is also an ancestor of x
+			node_ptr y = x->parent;
+			while (y != _nil && x == y->right)
+			{
+				x = y;
+				y = y->parent;
+			}
+			return y;
+		}
+
+		// find the predecessor of a given node
+		node_ptr predecessor(node_ptr x)
+		{
+			// if the left subtree is not null the predecessor is the rightmost node in the left subtree
+			if (x->left != _nil)
+			{
+				return maximum(x->left);
+			}
+			node_ptr y = x->parent;
+			while (y != _nil && x == y->left)
+			{
+				x = y;
+				y = y->parent;
+			}
+			return y;
+		}
 	};
 
 	template<class Iterator>

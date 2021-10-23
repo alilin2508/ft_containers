@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 14:13:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/22 16:18:56 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/23 02:25:36 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,6 @@ namespace ft
 	template<class T>
 	class random_access_iterator
 	{
-	protected:
-
-		T* _ptr;
-
 	public:
 
 		typedef std::ptrdiff_t difference_type;
@@ -159,6 +155,10 @@ namespace ft
 		{
 			return *(_ptr + n);
 		}
+
+	protected:
+
+		pointer _ptr;
 	};
 
 	template<class Iterator>
