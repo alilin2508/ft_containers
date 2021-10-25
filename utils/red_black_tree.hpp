@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/23 03:05:51 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/25 15:06:02 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,19 @@ namespace ft
 		typedef std::size_t size_type;
 
 
-		RBTree(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): _comp(comp), _alloc(alloc), _size(0)
+		RBTree(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): _comp(comp), _alloc(alloc), _root(NULL), _nil(NULL), _size(0)
 		{
 			_nil = _alloc.allocate(1);
 			_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
 			root = _nil;
+		}
+
+		RBTree(const RBTree &other): _comp(other.comp), _alloc(other._alloc), _root(NULL), _nil(NULL), _size(0)
+		{
+			_nil = _alloc.allocate(1);
+			_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
+			root = _nil;
+			*this = other;
 		}
 
 		virtual ~RBtree()
@@ -130,7 +138,7 @@ namespace ft
 			x->parent = y;
 		}
 
-		void insert(Node node)
+		node_ptr insertNode(Node node)
 		{
 		// init with those values
 		// node->parent = nullptr;
@@ -171,6 +179,7 @@ namespace ft
 			}
 			// Fix the tree colors
 			fixInsert(node);
+			return (node);
 		}
 
 		void deleteNode(key_type key)
@@ -451,11 +460,26 @@ namespace ft
 
 		node_ptr searchTreeHelper(node_ptr node, key_type key)
 		{
-			if (node == _nil || key == node->data)
+			if (node == _nil || key == get_key_from_val(node->data))
 				return node;
 			if (key < node->data)
 				return searchTreeHelper(node->left, key);
 			return searchTreeHelper(node->right, key);
+		}
+
+		void copy_helper(node_ptr *lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs)
+		{
+			if (rhs == nil_rhs)
+			{
+				lhs = _nil;
+				return;
+			}
+			lhs = _alloc.allocate(1);
+			_alloc.construct(lhs, *rhs);
+			// Parent is the previously created node pased as argument
+			lhs->parent = parent;
+			copy_helper(lhs->left, rhs->left, lhs, nil_rhs);
+			copy_helper(lhs->right, rhs->right, lhs, nil_rhs);
 		}
 	};
 }
