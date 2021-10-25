@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/25 15:06:02 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/25 17:55:46 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 #include <iterator>
 #include <cstddef>
 #include <memory>
+#include <iostream>
 
 #include "pair.hpp"
 #include "reverse_iterator.hpp"
-#include ""
 
 namespace ft
 {
@@ -35,9 +35,9 @@ namespace ft
 		struct Node* right;
 
 		value_type data;
-		color color;
+		color _color;
 
-		Node(value_type data, Node* parent, Node* left, Node* right, color color): data(data), parent(parent), left(left), right(right), color(color) {}
+		Node(value_type data, Node* parent, Node* left, Node* right, color clr): parent(parent), left(left), right(right), data(data), _color(clr) {}
 	};
 
 	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<Node<T> > >
@@ -56,18 +56,18 @@ namespace ft
 		typedef std::size_t size_type;
 
 
-		RBTree(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): _comp(comp), _alloc(alloc), _root(NULL), _nil(NULL), _size(0)
+		RBtree(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): _root(NULL), _nil(NULL), _comp(comp), _alloc(alloc), _size(0)
 		{
 			_nil = _alloc.allocate(1);
 			_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
-			root = _nil;
+			_root = _nil;
 		}
 
-		RBTree(const RBTree &other): _comp(other.comp), _alloc(other._alloc), _root(NULL), _nil(NULL), _size(0)
+		RBtree(const RBtree &other): _root(NULL), _nil(NULL), _comp(other._comp), _alloc(other._alloc), _size(0)
 		{
 			_nil = _alloc.allocate(1);
 			_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
-			root = _nil;
+			_root = _nil;
 			*this = other;
 		}
 
@@ -79,23 +79,23 @@ namespace ft
 			_alloc.deallocate(_nil, 1);
 		}
 
-		node_pointer getRoot()
+		node_ptr getRoot()
 		{
 			return (this->_root);
 		}
 
 		// find the node with the minimum key
-		node_ptr minimum(node_ptr node)
+		node_ptr minimum(node_ptr node) const
 		{
-			while (node->left != TNULL)
+			while (node->left != _nil)
 				node = node->left;
 			return node;
 		}
 
 		// find the node with the maximum key
-		node_ptr maximum(node_ptr node)
+		node_ptr maximum(node_ptr node) const
 		{
-			while (node->right != TNULL)
+			while (node->right != _nil)
 				node = node->right;
 			return node;
 		}
@@ -138,7 +138,7 @@ namespace ft
 			x->parent = y;
 		}
 
-		node_ptr insertNode(Node node)
+		node_ptr insertNode(node_ptr node)
 		{
 		// init with those values
 		// node->parent = nullptr;
@@ -169,7 +169,7 @@ namespace ft
 			// if new node is a root node, simply return
 			if (node->parent == NULL)
 			{
-				node->color = black;
+				node->_color = black;
 				return;
 			}
 			// if the grandparent is null, simply return
@@ -241,16 +241,16 @@ namespace ft
 		void fixInsert(node_ptr z)
 		{
 			node_ptr u;
-			while (z->parent->color == red)
+			while (z->parent->_color == red)
 			{
 				if (z->parent == z->parent->parent->right) // parent is gp's right child
 				{
 					u = z->parent->parent->left; // uncle is left
-					if (u->color == red) // if uncle also red
+					if (u->_color == red) // if uncle also red
 					{
-						u->color = black;
-						z->parent->color = black;
-						z->parent->parent->color = red;
+						u->_color = black;
+						z->parent->_color = black;
+						z->parent->parent->_color = red;
 						z = z->parent->parent;
 					}
 					else
@@ -260,20 +260,20 @@ namespace ft
 							z = z->parent;
 							right_rotate(z); // new z is old parent
 						}
-						z->parent->color = black;
-						z->parent->parent->color = red;
+						z->parent->_color = black;
+						z->parent->parent->_color = red;
 						left_rotate(z->parent->parent);
 					}
 				}
 				else // parent is gp's left child #mirror_case
 				{
 					u = z->parent->parent->right; // uncle
-					if (u->color == red)
+					if (u->_color == red)
 					{
 					// mirror case
-						u->color = black;
-						z->parent->color = black;
-						z->parent->parent->color = red;
+						u->_color = black;
+						z->parent->_color = black;
+						z->parent->parent->_color = red;
 						z = z->parent->parent;
 					}
 					else
@@ -282,26 +282,26 @@ namespace ft
 						{
 							// mirror case
 							z = z->parent;
-							left_rotate(k);
+							left_rotate(z);
 						}
 						// mirror case
-						z->parent->color = black;
-						z->parent->parent->color = red;
-						right_rotate(k->parent->parent);
+						z->parent->_color = black;
+						z->parent->parent->_color = red;
+						right_rotate(z->parent->parent);
 					}
 				}
-				if (z == root)
+				if (z == _root)
 				{
 					break;
 				}
 			}
-			root->color = black; // root is black
+			_root->_color = black; // root is black
 		}
 
 		void rbTransplant(node_ptr u, node_ptr v) // replaces u by v
 		{
 			if (u->parent == NULL)
-				root = v;
+				_root = v;
 			else if (u == u->parent->left)
 				u->parent->left = v;
 			else
@@ -313,74 +313,74 @@ namespace ft
 		void fixDelete(node_ptr x)
 		{
 			node_ptr w;
-			while (x != this->_root && x->color == black)
+			while (x != this->_root && x->_color == black)
 			{
 				if (x == x->parent->left) // if x is the left child
 				{
 					w = x->parent->right; // w is x's right brother
-					if (w->color == red)
+					if (w->_color == red)
 					{
-						w->color = black;
-						x->parent->color = red;
+						w->_color = black;
+						x->parent->_color = red;
 						leftRotate(x->parent); // new parent is w, old parent p became w's left child, p is still x's parent and x->parent->right bacame old w->left
 						w = x->parent->right;
 					}
 
-					if (w->left->color == black && w->right->color == black)
+					if (w->left->_color == black && w->right->_color == black)
 					{
-						w->color = red;
+						w->_color = red;
 						x = x->parent;
 					}
 					else // at least one child is red
 					{
-						if (w->right->color == black) // left child is red
+						if (w->right->_color == black) // left child is red
 						{
-							w->left->color = black;
-							w->color = red;
-							rightRotate(s);
+							w->left->_color = black;
+							w->_color = red;
+							rightRotate(x);
 							w = x->parent->right;
 						}
-						w->color = x->parent->color;
-						x->parent->color = black;
-						w->right->color = black;
+						w->_color = x->parent->_color;
+						x->parent->_color = black;
+						w->right->_color = black;
 						leftRotate(x->parent);
-						x = root;
+						x = _root;
 					}
 				}
 				else // mirror case
 				{
 					w = x->parent->left;
-					if (w->color == red)
+					if (w->_color == red)
 					{
-						w->color = black;
-						x->parent->color = red;
+						w->_color = black;
+						x->parent->_color = red;
 						rightRotate(x->parent);
 						w = x->parent->left;
 					}
 
-					if (w->left->color == black && w->right->color == black)
+					if (w->left->_color == black && w->right->_color == black)
 					{
-						w->color = red;
+						w->_color = red;
 						x = x->parent;
 					}
 					else
 					{
-						if (w->left->color == black)
+						if (w->left->_color == black)
 						{
-							w->right->color = black;
-							w->color = red;
-							leftRotate(s);
+							w->right->_color = black;
+							w->_color = red;
+							leftRotate(x);
 							w = x->parent->left;
 						}
-						w->color = x->parent->color;
-						x->parent->color = black;
-						w->left->color = black;
+						w->_color = x->parent->_color;
+						x->parent->_color = black;
+						w->left->_color = black;
 						rightRotate(x->parent);
-						x = root;
+						x = _root;
 					}
 				}
 			}
-			x->color = black; // root is black
+			x->_color = black; // root is black
 		}
 
 		void deleteNodeHelper(node_ptr node, key_type key)
@@ -405,7 +405,7 @@ namespace ft
 			}
 
 			y = z; // y saves the suppressed node's placement
-			color y_og_color = y->color;
+			color y_og_color = y->_color;
 			if (z->left == NULL) // z only had 1 child whitch is the right one so so it get's replaced by it's child
 			{
 				x = z->right; // x saves the right child's branch
@@ -419,7 +419,7 @@ namespace ft
 			else // suppressed node had 2 children and is replaced by the minimum of it's right branch
 			{
 				y = minimum(z->right); // search for the minimum in the right child's branch
-				y_og_color = y->color;
+				y_og_color = y->_color;
 				x = y->right; // x saves the minimum's right branch
 				if (y->parent == z) // the minimum is z->right
 					x->parent = y;
@@ -432,7 +432,7 @@ namespace ft
 				rbTransplant(z, y); // replace z by the correct value whitch is y and maintain the tree as a good search tree
 				y->left = z->left; // set the new z's left side
 				y->left->parent = y;
-				y->color = z->color; // we keep the old z color
+				y->_color = z->_color; // we keep the old z color
 			}
 			_alloc.destroy(z);
 			_alloc.deallocate(z, 1);
@@ -467,7 +467,7 @@ namespace ft
 			return searchTreeHelper(node->right, key);
 		}
 
-		void copy_helper(node_ptr *lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs)
+		void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs)
 		{
 			if (rhs == nil_rhs)
 			{

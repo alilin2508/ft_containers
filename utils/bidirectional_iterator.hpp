@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:20:14 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/23 02:37:58 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/25 17:51:50 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,15 @@
 
 namespace ft
 {
-	template<class Node>
+	template< class Node_type >
 	class bidirectional_iterator
 	{
 	public:
 
 		typedef std::ptrdiff_t difference_type;
-		typedef Node value_type;
-		typedef Node* node_ptr;
-		typedef Node::value_type data_type;
+		typedef Node_type value_type;
+		typedef Node_type* node_ptr;
+		typedef typename Node_type::value_type const data_type;
 
 		typedef data_type* pointer;
 		typedef data_type& reference;
@@ -37,9 +37,9 @@ namespace ft
 		typedef const data_type& const_reference;
 		typedef std::bidirectional_iterator_tag iterator_category;
 
-		bidirectional_iterator() : _ptr(NULL), _root(NULL), _nil(NULL) {}
-		bidirectional_iterator(node_ptr ptr, node_ptr root, node_ptr nil) : _ptr(ptr), , _root(root), _nil(nil){}
-		bidirectional_iterator(bidirectional_iterator const &lhs) : _ptr(lhs._ptr), _root(lhs._root), _nil(lhs._nil) {}
+		bidirectional_iterator() :  _root(NULL), _nil(NULL), _ptr(NULL) {}
+		bidirectional_iterator(node_ptr ptr, node_ptr root, node_ptr nil) : _root(root), _nil(nil), _ptr(ptr) {}
+		bidirectional_iterator(bidirectional_iterator const &lhs) : _root(lhs._root), _nil(lhs._nil), _ptr(lhs._ptr) {}
 		bidirectional_iterator &operator=(bidirectional_iterator const &lhs)
 		{
 			if (this == &lhs)
@@ -65,14 +65,14 @@ namespace ft
 		friend bool operator!=(ft::bidirectional_iterator<Iterator> const &lhs, ft::bidirectional_iterator<Iterator> const &rhs);
 
 		template<class Iterator, class Iter>
-		friend bool operator==(ft::random_access_iterator<Iterator> const &lhs, ft::random_access_iterator<Iter> const &rhs);
+		friend bool operator==(ft::bidirectional_iterator<Iterator> const &lhs, ft::bidirectional_iterator<Iter> const &rhs);
 
 		template<class Iterator, class Iter>
-		friend bool operator!=(ft::random_access_iterator<Iterator> const &lhs, ft::random_access_iterator<Iter> const &rhs);
+		friend bool operator!=(ft::bidirectional_iterator<Iterator> const &lhs, ft::bidirectional_iterator<Iter> const &rhs);
 
 		reference operator*() const
 		{
-			return (ptr->data);
+			return (_ptr->data);
 		}
 
 		pointer operator->() const
@@ -89,7 +89,7 @@ namespace ft
 
 		bidirectional_iterator operator++(int)
 		{
-			bidirectional_iterator<T> tmp(*this);
+			bidirectional_iterator tmp(*this);
 			operator++();
 			return (tmp);
 		}
@@ -105,21 +105,21 @@ namespace ft
 
 		bidirectional_iterator operator--(int)
 		{
-			bidirectional_iterator<T> tmp(*this);
+			bidirectional_iterator tmp(*this);
 			operator--();
 			return (tmp);
 		}
 
 	protected:
 
-		Node _root;
-		Node _nil;
-		Node *_ptr;
+		node_ptr _root;
+		node_ptr _nil;
+		node_ptr _ptr;
 
 		// find the node with the minimum key
 		node_ptr minimum(node_ptr node)
 		{
-			while (node->left != TNULL)
+			while (node->left != _nil)
 				node = node->left;
 			return node;
 		}
@@ -127,7 +127,7 @@ namespace ft
 		// find the node with the maximum key
 		node_ptr maximum(node_ptr node)
 		{
-			while (node->right != TNULL)
+			while (node->right != _nil)
 				node = node->right;
 			return node;
 		}
@@ -181,13 +181,13 @@ namespace ft
 	}
 
 	template<class Iterator, class Iter>
-	bool operator==(ft::random_access_iterator<Iterator> const &lhs, ft::random_access_iterator<Iter> const &rhs)
+	bool operator==(ft::bidirectional_iterator<Iterator> const &lhs, ft::bidirectional_iterator<Iter> const &rhs)
 	{
 		return (lhs._ptr == rhs._ptr);
 	}
 
 	template<class Iterator, class Iter>
-	bool operator!=(ft::random_access_iterator<Iterator> const &lhs, ft::random_access_iterator<Iter> const &rhs)
+	bool operator!=(ft::bidirectional_iterator<Iterator> const &lhs, ft::bidirectional_iterator<Iter> const &rhs)
 	{
 		return (lhs._ptr != rhs._ptr);
 	}
