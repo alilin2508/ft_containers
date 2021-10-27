@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 16:09:38 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/25 17:57:42 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/27 18:21:10 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,10 @@ namespace ft
 		{
 			insert(first, last);
 		}
-		map(const map &x): tree_type(x) {}
+		map(const map &x)
+		{
+			insert(x.begin(), x.end());
+		}
 		virtual ~map() {}
 
 		map &operator=(const map &x)
@@ -166,7 +169,7 @@ namespace ft
 			{
 				node_ptr node = this->_alloc.allocate(1);
 				this->_alloc.construct(node, node_type(val, NULL, this->_nil, this->_nil, red));
-				it = iterator(tree_type::insertNode(node), this->root, this->_nil);
+				it = iterator(tree_type::insertNode(node, this->_root), this->_root, this->_nil);
 				this->_size++;
 				return (ft::make_pair(it, true));
 			}
@@ -174,23 +177,50 @@ namespace ft
 
 		iterator insert(iterator position, const value_type &val)
 		{
-			if ()
-			{
+			node_ptr _successor = successor(position._ptr);
+			node_ptr node;
 
+			// Check if position is correct so if : position's successor > val > position
+			if (_comp(get_key_from_iterator(position), get_key_from_val(val)) && _comp(get_key_from_val(val), get_key_from_val(_successor->data)))
+			{
+				node = this->_alloc.allocate(1);
+				this->_alloc.construct(node, node_type(val, NULL, this->_nil, this->_nil, red));
+				this->_size++;
+				return iterator(insertNode(node, position._ptr), this->_root, this->_nil);
 			}
+			else
+				return (insert(val).first); // insert(val) returns a pair of it ans bool so the pair.first returns an it
 		}
 
 		template <class InputIterator>
 		void insert(InputIterator first, InputIterator last)
 		{
-
+			while (first != last)
+			{
+				insert(*first++); // first here is a bidirectional_iterator which has an * overload so *first = first._ptr->_data which is a pair in map so a value_type
+			}
 		}
 
-		void erase (iterator position);
+		// void erase (iterator position);
+		//
+		// size_type erase (const key_type &k);
+		//
+		// void erase (iterator first, iterator last);
 
-		size_type erase (const key_type &k);
+		iterator find(const key_type &k)
+		{
+			return (iterator(tree_type::searchTree(k), this->_root, this->_nil));
+		}
 
-		void erase (iterator first, iterator last);
+		const_iterator find(const key_type &k) const
+		{
+			return (const_iterator(tree_type::searchTree(k), this->_root, this->_nil));
+		}
+
+		void clear()
+		{
+			tree_type::clear_helper(this->_root);
+		}
 
 
 	private:

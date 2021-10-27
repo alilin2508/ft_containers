@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/25 17:55:46 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/27 17:05:01 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,9 @@ namespace ft
 			if (x->parent == NULL)
 				this->_root = y;
 			else if (x == x->parent->left) // if x was it's parent's left child, y becomes it's new parent's left child
-				x->parent->left == y;
+				x->parent->left = y;
 			else
-				x->parent->right == y; // mirror case
+				x->parent->right = y; // mirror case
 			y->left = x;
 			x->parent = y;
 		}
@@ -131,14 +131,14 @@ namespace ft
 			if (x->parent == NULL)
 				this->_root = y;
 			else if (x == x->parent->left)
-				x->parent->left == y;
+				x->parent->left = y;
 			else
-				x->parent->right == y;
+				x->parent->right = y;
 			y->right = x;
 			x->parent = y;
 		}
 
-		node_ptr insertNode(node_ptr node)
+		node_ptr insertNode(node_ptr node, node_ptr hint)
 		{
 		// init with those values
 		// node->parent = nullptr;
@@ -149,7 +149,7 @@ namespace ft
 		// new node must be red
 
 			node_ptr y = NULL;
-			node_ptr x = this->root;
+			node_ptr x = hint;
 
 			while (x != _nil) // find node's natural placement
 			{
@@ -161,7 +161,7 @@ namespace ft
 			}
 			node->parent = y;
 			if (y == NULL)
-				this->root = node;
+				this->_root = node;
 			else if (_comp(get_key_from_val(node->data), get_key_from_val(y->data))) // place the new node at it's right placement
 				y->left = node;
 			else
@@ -170,12 +170,12 @@ namespace ft
 			if (node->parent == NULL)
 			{
 				node->_color = black;
-				return;
+				return (this->_root);
 			}
 			// if the grandparent is null, simply return
 			if (node->parent->parent == NULL)
 			{
-				return;
+				return (node);
 			}
 			// Fix the tree colors
 			fixInsert(node);
@@ -462,12 +462,12 @@ namespace ft
 		{
 			if (node == _nil || key == get_key_from_val(node->data))
 				return node;
-			if (key < node->data)
+			if (key < get_key_from_val(node->data))
 				return searchTreeHelper(node->left, key);
 			return searchTreeHelper(node->right, key);
 		}
 
-		void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs)
+		void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs) // lhs = rhs
 		{
 			if (rhs == nil_rhs)
 			{

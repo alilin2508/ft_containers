@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:20:14 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/25 17:51:50 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/27 18:25:59 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,22 @@
 
 namespace ft
 {
-	template< class Node_type >
+	template< class NodeType >
 	class bidirectional_iterator
 	{
 	public:
 
 		typedef std::ptrdiff_t difference_type;
-		typedef Node_type value_type;
-		typedef Node_type* node_ptr;
-		typedef typename Node_type::value_type const data_type;
+		typedef NodeType valuetype;
+		typedef typename valuetype::value_type data_type;
 
 		typedef data_type* pointer;
 		typedef data_type& reference;
 		typedef const data_type* const_pointer;
 		typedef const data_type& const_reference;
+
 		typedef std::bidirectional_iterator_tag iterator_category;
+		typedef valuetype* node_ptr;
 
 		bidirectional_iterator() :  _root(NULL), _nil(NULL), _ptr(NULL) {}
 		bidirectional_iterator(node_ptr ptr, node_ptr root, node_ptr nil) : _root(root), _nil(nil), _ptr(ptr) {}
@@ -53,9 +54,9 @@ namespace ft
 
 		// Overload called when trying to copy construct a const_iterator
 		// based on an iterator
-		operator bidirectional_iterator<value_type const>() const
+		operator bidirectional_iterator<valuetype const>() const
 		{
-			return bidirectional_iterator<value_type const>(_ptr, _root, _nil);
+			return bidirectional_iterator<valuetype const>(_ptr, _root, _nil);
 		}
 
 		template<class Iterator>
@@ -70,12 +71,22 @@ namespace ft
 		template<class Iterator, class Iter>
 		friend bool operator!=(ft::bidirectional_iterator<Iterator> const &lhs, ft::bidirectional_iterator<Iter> const &rhs);
 
-		reference operator*() const
+		reference operator*()
 		{
 			return (_ptr->data);
 		}
 
-		pointer operator->() const
+		const_reference operator*() const
+		{
+			return (_ptr->data);
+		}
+
+		pointer operator->()
+		{
+			return (&(operator*()));
+		}
+
+		const_pointer operator->() const
 		{
 			return (&(operator*()));
 		}

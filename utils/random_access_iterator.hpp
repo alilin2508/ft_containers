@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 14:13:51 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/23 02:25:36 by alilin           ###   ########.fr       */
+/*   Updated: 2021/10/27 17:10:26 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,22 @@ namespace ft
 		template<class Iterator, class Iter>
 		friend bool operator>=(ft::random_access_iterator<Iterator> const &lhs, ft::random_access_iterator<Iter> const &rhs);
 
-		reference operator*() const
+		const_reference operator*() const
 		{
 			return (*_ptr);
 		}
 
-		pointer operator->() const
+		const_pointer operator->() const
+		{
+			return (_ptr);
+		}
+
+		reference operator*()
+		{
+			return (*_ptr);
+		}
+
+		pointer operator->()
 		{
 			return (_ptr);
 		}
