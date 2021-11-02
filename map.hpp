@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 16:09:38 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/27 18:21:10 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/02 17:13:22 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 namespace ft
 {
 	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > >
-	class map : public RBtree< Key, ft::pair<const Key, T>, Compare, typename Alloc::template rebind<ft::Node<ft::pair<Key const, T> > >::other  >
+	class map
 	{
 	public:
 
@@ -42,30 +42,35 @@ namespace ft
 		typedef typename allocator_type::pointer pointer;
 		typedef typename allocator_type::const_pointer const_pointer;
 		typedef typename allocator_type::difference_type difference_type;
+		typedef typename allocator_type::size_type size_type;
+
+		typedef ft::RBtree<key_type, value_type, key_compare> tree_type;
+		typedef Node<value_type> node_type;
+		typedef Node<value_type>* node_ptr;
 
 		// change allocator from alloc pair to alloc nodes
-		typedef typename allocator_type::template rebind<ft::Node<ft::pair<Key const, T> > >::other node_allocator_type;
-		typedef ft::RBtree< key_type, ft::pair<const Key, T>, Compare, node_allocator_type > tree_type;
+		// typedef typename allocator_type::template rebind<ft::Node<ft::pair<Key const, T> > >::other node_allocator_type;
+		// typedef ft::RBtree< key_type, ft::pair<const Key, T>, Compare, node_allocator_type > tree_type;
 
-		typedef typename tree_type::node_ptr node_ptr;
-		typedef typename tree_type::node_type node_type;
-		typedef typename tree_type::size_type size_type;
-		// typedef typename tree_type::_alloc node_alloc;
+		// typedef typename tree_type::node_ptr node_ptr;
+		// typedef typename tree_type::node_type node_type;
+		// typedef typename tree_type::size_type size_type;
 
-		typedef ft::bidirectional_iterator<node_type> iterator;
-		typedef ft::bidirectional_iterator<node_type const> const_iterator;
+		typedef ft::bidirectional_iterator<value_type, node_type> iterator;
+		typedef ft::bidirectional_iterator<value_type const, node_type const> const_iterator;
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-		explicit map(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): tree_type(comp), alloc(alloc) {}
+		explicit map(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): _comp(comp), _alloc(alloc), _tree(), _size(0) {}
 		template <class InputIterator>
-		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()): tree_type(comp), alloc(alloc)
+		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()): _comp(comp), _alloc(alloc), _tree(), _size(0)
 		{
+			std::cout << "oko" << std::endl;
 			insert(first, last);
 		}
-		map(const map &x)
+		map(const map &x): _comp(x._comp), _alloc(x._alloc), _tree(), _size(0)
 		{
-			insert(x.begin(), x.end());
+			*this = x;
 		}
 		virtual ~map() {}
 
@@ -73,59 +78,60 @@ namespace ft
 		{
 			if (this == &x)
 				return (*this);
-			if (this->_root != NULL)
+			if (_tree.getRoot() != NULL)
 				clear();
-			tree_type::copy_helper(this->_root, x._root, NULL, x._nil);
-			this->_size = x._size;
+			this->_comp = x._comp;
+			this->_alloc = x._alloc;
+			insert(x.begin(), x.end());
 			return *this;
 		}
 
 		iterator begin()
 		{
-			return (iterator(tree_type::minimum(this->_root), this->_root, this->_nil));
+			return iterator(_tree.minimum(_tree.getRoot()), _tree.getRoot(), _tree.getNil());
 		}
 
 		const_iterator begin() const
 		{
-			return (const_iterator(tree_type::minimum(this->_root), this->_root, this->_nil));
+			return const_iterator(_tree.minimum(_tree.getRoot()), _tree.getRoot(), _tree.getNil());
 		}
 
 		iterator end()
 		{
-			if (this->_size == 0)
-				return (begin());
-			return (iterator(this->_nil, this->_root, this->_nil));
+			if (_tree.getSize() == 0)
+				return begin();
+			return iterator(_tree.getNil(), _tree.getRoot(), _tree.getNil());
 		}
 
 		const_iterator end() const
 		{
-			if (this->_size == 0)
-				return (begin());
-			return (const_iterator(this->_nil, this->_root, this->_nil));
+			if (_tree.getSize() == 0)
+				return begin();
+			return const_iterator(_tree.getNil(), _tree.getRoot(), _tree.getNil());
 		}
 
 		reverse_iterator rbegin()
 		{
-			return (reverse_iterator(this->_nil, this->_root, this->_nil));
+			return reverse_iterator(end());
 		}
 
 		const_reverse_iterator rbegin() const
 		{
-			return (const_reverse_iterator(this->_nil, this->_root, this->_nil));
+			return const_reverse_iterator(end());
 		}
 
 		reverse_iterator rend()
 		{
-			if (this->_size == 0)
-				return (rbegin());
-			return (reverse_iterator(tree_type::minimum(), this->_root, this->_nil));
+			if (_tree.getSize() == 0)
+				return rbegin();
+			return reverse_iterator(begin());
 		}
 
 		const_reverse_iterator rend() const
 		{
-			if (this->_size == 0)
-				return (rbegin());
-			return (const_reverse_iterator(tree_type::minimum(), this->_root, this->_nil));
+			if (_tree.getSize() == 0)
+				return rbegin();
+			return const_reverse_iterator(begin());
 		}
 
 		bool empty() const
@@ -145,7 +151,7 @@ namespace ft
 
 		mapped_type &operator[](const key_type &k)
 		{
-			node_ptr val = tree_type::searchTreeHelper(this->_root, k);
+			node_ptr val = _tree.searchTreeHelper(_tree.getRoot(), k);
 
 			if (val)
 				return (val->data.second);
@@ -153,7 +159,7 @@ namespace ft
 			{
 				ft::pair<iterator,bool> pr;
 
-				pr = insert(ft::make_pair(k, mapped_type()));
+				pr = insert(value_type(k, mapped_type())); // insert returns a pair an first element of pair is an it
 				iterator it = pr.first;
 				return (it._ptr->data.second);
 			}
@@ -161,32 +167,34 @@ namespace ft
 
 		ft::pair<iterator,bool> insert(const value_type &val)
 		{
+			std::cout << "oko" << std::endl;
 			iterator it = find(val.first);
+			std::cout << "oko" << std::endl;
 
-			if (it != end())
-				return (ft::make_pair(it, false));
+			if (it )// != end())
+			{
+				std::cout << "oko" << std::endl;
+				return ft::pair<iterator,bool>(end(), false);
+				//return (ft::pair<iterator,bool>(it, false));
+			}
 			else
 			{
-				node_ptr node = this->_alloc.allocate(1);
-				this->_alloc.construct(node, node_type(val, NULL, this->_nil, this->_nil, red));
-				it = iterator(tree_type::insertNode(node, this->_root), this->_root, this->_nil);
+				std::cout << "oko" << std::endl;
+				it = iterator(_tree.insertNode(val, _tree.getRoot()), _tree.getRoot(), _tree.getNil());
 				this->_size++;
-				return (ft::make_pair(it, true));
+				return (ft::pair<iterator,bool>(it, true));
 			}
 		}
 
 		iterator insert(iterator position, const value_type &val)
 		{
-			node_ptr _successor = successor(position._ptr);
-			node_ptr node;
+			node_ptr _successor = _tree.successor(position.getPtr());
 
 			// Check if position is correct so if : position's successor > val > position
 			if (_comp(get_key_from_iterator(position), get_key_from_val(val)) && _comp(get_key_from_val(val), get_key_from_val(_successor->data)))
 			{
-				node = this->_alloc.allocate(1);
-				this->_alloc.construct(node, node_type(val, NULL, this->_nil, this->_nil, red));
 				this->_size++;
-				return iterator(insertNode(node, position._ptr), this->_root, this->_nil);
+				return iterator(_tree.insertNode(val, position.getPtr()), _tree.getRoot(), _tree.getNil());
 			}
 			else
 				return (insert(val).first); // insert(val) returns a pair of it ans bool so the pair.first returns an it
@@ -195,8 +203,11 @@ namespace ft
 		template <class InputIterator>
 		void insert(InputIterator first, InputIterator last)
 		{
+			std::cout << "oko" << std::endl;
+			int i = 0;
 			while (first != last)
 			{
+				std::cout << i++ << std::endl;
 				insert(*first++); // first here is a bidirectional_iterator which has an * overload so *first = first._ptr->_data which is a pair in map so a value_type
 			}
 		}
@@ -209,23 +220,27 @@ namespace ft
 
 		iterator find(const key_type &k)
 		{
-			return (iterator(tree_type::searchTree(k), this->_root, this->_nil));
+			return iterator(_tree.searchTree(k), _tree.getRoot(), _tree.getNil());
 		}
 
 		const_iterator find(const key_type &k) const
 		{
-			return (const_iterator(tree_type::searchTree(k), this->_root, this->_nil));
+			return const_iterator(_tree.searchTree(k), _tree.getRoot(), _tree.getNil());
 		}
 
 		void clear()
 		{
-			tree_type::clear_helper(this->_root);
+			_tree.clear_helper(_tree.getRoot());
+			this->_size = _tree.getSize();
 		}
 
 
 	private:
 
-		allocator_type alloc;
+		key_compare _comp;
+		allocator_type _alloc;
+		tree_type _tree;
+		size_type _size;
 
 		key_type get_key_from_val(value_type const &val) const
 		{
@@ -234,7 +249,7 @@ namespace ft
 
 		key_type get_key_from_iterator(iterator it) const
 		{
-			return (it->first);
+			return (it.getPtr()->data.first);
 		}
 	};
 }

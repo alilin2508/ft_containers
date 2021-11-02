@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/27 17:05:01 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/02 16:53:59 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,15 @@ namespace ft
 	{
 		typedef	T value_type;
 
+		value_type data;
+
 		struct Node* parent;
 		struct Node* left;
 		struct Node* right;
 
-		value_type data;
 		color _color;
 
-		Node(value_type data, Node* parent, Node* left, Node* right, color clr): parent(parent), left(left), right(right), data(data), _color(clr) {}
+		Node(value_type data, Node* parent, Node* left, Node* right, color clr): data(data), parent(parent), left(left), right(right), _color(clr) {}
 	};
 
 	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<Node<T> > >
@@ -56,20 +57,20 @@ namespace ft
 		typedef std::size_t size_type;
 
 
-		RBtree(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): _root(NULL), _nil(NULL), _comp(comp), _alloc(alloc), _size(0)
+		RBtree(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()): _comp(comp), _alloc(alloc), _size(0)
 		{
 			_nil = _alloc.allocate(1);
 			_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
 			_root = _nil;
 		}
 
-		RBtree(const RBtree &other): _root(NULL), _nil(NULL), _comp(other._comp), _alloc(other._alloc), _size(0)
-		{
-			_nil = _alloc.allocate(1);
-			_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
-			_root = _nil;
-			*this = other;
-		}
+		// RBtree(RBtree const &other): _root(NULL), _nil(NULL), _comp(other._comp), _alloc(other._alloc), _size(0)
+		// {
+		// 	_nil = _alloc.allocate(1);
+		// 	_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
+		// 	_root = _nil;
+		// 	*this = other;
+		// }
 
 		virtual ~RBtree()
 		{
@@ -79,9 +80,19 @@ namespace ft
 			_alloc.deallocate(_nil, 1);
 		}
 
-		node_ptr getRoot()
+		node_ptr getRoot() const
 		{
 			return (this->_root);
+		}
+
+		node_ptr getNil() const
+		{
+			return (this->_nil);
+		}
+
+		size_type getSize() const
+		{
+			return (this->_size);
 		}
 
 		// find the node with the minimum key
@@ -138,15 +149,19 @@ namespace ft
 			x->parent = y;
 		}
 
-		node_ptr insertNode(node_ptr node, node_ptr hint)
+		node_ptr insertNode(const value_type &data, node_ptr hint)
 		{
-		// init with those values
+		// init node with those values
+		// node->data = data;
 		// node->parent = nullptr;
-		// node->data = key;
 		// node->left = TNULL;
 		// node->right = TNULL;
 		// node->color = red;
 		// new node must be red
+
+			node_ptr node;
+			node = _alloc.allocate(1);
+			_alloc.construct(node, node_type(data, NULL, _nil, _nil, red));
 
 			node_ptr y = NULL;
 			node_ptr x = hint;
@@ -166,6 +181,7 @@ namespace ft
 				y->left = node;
 			else
 				y->right = node;
+			this->_size++;
 			// if new node is a root node, simply return
 			if (node->parent == NULL)
 			{
@@ -228,6 +244,45 @@ namespace ft
 			return y;
 		}
 
+		void clear_helper(node_ptr const &node)
+		{
+			// Base case of recursion
+			if (node == _nil)
+				return;
+
+			// Clear all nodes to the left and right of it
+			clear_helper(node->left);
+			clear_helper(node->right);
+
+			// Clear the node itself
+			_alloc.destroy(node);
+			_alloc.deallocate(node, 1);
+			_size--;
+		}
+
+		node_ptr searchTreeHelper(node_ptr node, key_type key)
+		{
+			if (node == _nil || key == get_key_from_val(node->data))
+				return node;
+			if (key < get_key_from_val(node->data))
+				return searchTreeHelper(node->left, key);
+			return searchTreeHelper(node->right, key);
+		}
+
+		void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs) // lhs = rhs
+		{
+			if (rhs == nil_rhs)
+			{
+				lhs = _nil;
+				return;
+			}
+			lhs = _alloc.allocate(1);
+			_alloc.construct(lhs, *rhs);
+			lhs->parent = parent; // Parent is the previously created node pased as argument
+			copy_helper(lhs->left, rhs->left, lhs, nil_rhs);
+			copy_helper(lhs->right, rhs->right, lhs, nil_rhs);
+		}
+
 	protected:
 
 		node_ptr _root;
@@ -236,7 +291,10 @@ namespace ft
 		allocator_type _alloc;
 		size_type _size;
 
-		virtual	key_type get_key_from_val(value_type const& val) const = 0;
+		key_type get_key_from_val(const value_type &val)
+		{
+			return (val.first);
+		}
 
 		void fixInsert(node_ptr z)
 		{
@@ -439,47 +497,6 @@ namespace ft
 			_size--;
 			if (y_og_color == black) // fix the lost black color on x
 				fixDelete(x);
-		}
-
-		void clear_helper(node_ptr const &node)
-		{
-			// Base case of recursion
-			if (node == _nil)
-				return;
-
-			// Clear all nodes to the left and right of it
-			clear_helper(node->left);
-			clear_helper(node->right);
-
-			// Clear the node itself
-			_alloc.destroy(node);
-			_alloc.deallocate(node, 1);
-
-			_size--;
-		}
-
-		node_ptr searchTreeHelper(node_ptr node, key_type key)
-		{
-			if (node == _nil || key == get_key_from_val(node->data))
-				return node;
-			if (key < get_key_from_val(node->data))
-				return searchTreeHelper(node->left, key);
-			return searchTreeHelper(node->right, key);
-		}
-
-		void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs) // lhs = rhs
-		{
-			if (rhs == nil_rhs)
-			{
-				lhs = _nil;
-				return;
-			}
-			lhs = _alloc.allocate(1);
-			_alloc.construct(lhs, *rhs);
-			// Parent is the previously created node pased as argument
-			lhs->parent = parent;
-			copy_helper(lhs->left, rhs->left, lhs, nil_rhs);
-			copy_helper(lhs->right, rhs->right, lhs, nil_rhs);
 		}
 	};
 }
