@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 16:09:38 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/03 16:25:45 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/03 17:32:59 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,15 +99,11 @@ namespace ft
 
 		iterator end()
 		{
-			if (_tree.getSize() == 0)
-				return begin();
 			return iterator(_tree.getNil(), _tree.getRoot(), _tree.getNil());
 		}
 
 		const_iterator end() const
 		{
-			if (_tree.getSize() == 0)
-				return begin();
 			return const_iterator(_tree.getNil(), _tree.getRoot(), _tree.getNil());
 		}
 
@@ -123,15 +119,11 @@ namespace ft
 
 		reverse_iterator rend()
 		{
-			if (_tree.getSize() == 0)
-				return rbegin();
 			return reverse_iterator(begin());
 		}
 
 		const_reverse_iterator rend() const
 		{
-			if (_tree.getSize() == 0)
-				return rbegin();
 			return const_reverse_iterator(begin());
 		}
 
@@ -175,8 +167,7 @@ namespace ft
 			}
 			else
 			{
-				node_ptr node = _tree.insertNode(val, _tree.getRoot());
-				it = iterator(node, _tree.getRoot(), _tree.getNil());
+				it = iterator(_tree.insertNode(val, _tree.getRoot()), _tree.getRoot(), _tree.getNil());
 				this->_size++;
 				return (ft::pair<iterator,bool>(it, true));
 			}
@@ -184,8 +175,10 @@ namespace ft
 
 		iterator insert(iterator position, const value_type &val)
 		{
+			std::cout << "caca" << std::endl;
+			std::cout << position.getPtr() << std::endl;
 			node_ptr _successor = _tree.successor(position.getPtr());
-
+			std::cout << "caca1" << std::endl;
 			// Check if position is correct so if : position's successor > val > position
 			if (_comp(get_key_from_iterator(position), get_key_from_val(val)) && _comp(get_key_from_val(val), get_key_from_val(_successor->data)))
 			{
@@ -199,11 +192,9 @@ namespace ft
 		template <class InputIterator>
 		void insert(InputIterator first, InputIterator last)
 		{
-			int i = 0;
 			while (first != last)
 			{
 				insert(*first++); // first here is a bidirectional_iterator which has an * overload so *first = first._ptr->_data which is a pair in map so a value_type
-				std::cout << "i = " << i << std::endl;
 			}
 		}
 

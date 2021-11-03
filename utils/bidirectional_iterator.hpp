@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:20:14 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/03 14:16:33 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/03 17:19:28 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,16 +128,6 @@ namespace ft
 		node_ptr getPtr() const
 		{
 			return (this->_ptr);
-		}
-
-		node_ptr getRoot() const
-		{
-			return (this->_root);
-		}
-
-		node_ptr getNil() const
-		{
-			return (this->_nil);
 		}
 
 	protected:

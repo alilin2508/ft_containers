@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/03 16:29:37 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/03 17:18:12 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,7 @@ namespace ft
 
 		virtual ~RBtree()
 		{
-			clear_helper(_root);
-			_root = _nil;
+			clear_h(_root);
 			_alloc.destroy(_nil);
 			_alloc.deallocate(_nil, 1);
 		}
@@ -101,7 +100,7 @@ namespace ft
 			node_ptr node = _root;
 
 			if (this->_size == 0)
-				return NULL;
+				return _nil;
 			while (node->left != _nil)
 				node = node->left;
 			return node;
@@ -113,7 +112,7 @@ namespace ft
 			node_ptr node = _root;
 
 			if (this->_size == 0)
-				return NULL;
+				return _nil;
 			while (node->right != _nil)
 				node = node->right;
 			return node;
@@ -123,7 +122,7 @@ namespace ft
 		node_ptr minimum(node_ptr node) const
 		{
 			if (this->_size == 0)
-				return NULL;
+				return _nil;
 			while (node->left != _nil)
 				node = node->left;
 			return node;
@@ -133,7 +132,7 @@ namespace ft
 		node_ptr maximum(node_ptr node) const
 		{
 			if (this->_size == 0)
-				return NULL;
+				return _nil;
 			while (node->right != _nil)
 				node = node->right;
 			return node;
@@ -243,17 +242,18 @@ namespace ft
 			// if the right subtree is not null the successor is the leftmost node in the sright subtree
 			if (x->right != _nil)
 			{
+				std::cout << "proute" << std::endl;
 				return minimum(x->right);
 			}
 			// else it is the lowest ancestor of x whose left child is also an ancestor of x
 			node_ptr y = x->parent;
-			while (y != _nil && x == y->right)
+			while (y != NULL && x == y->right)
 			{
 				x = y;
 				y = y->parent;
 			}
 			if (!y)
-				return _nil;
+				return NULL;
 			return y;
 		}
 
@@ -266,13 +266,13 @@ namespace ft
 				return maximum(x->left);
 			}
 			node_ptr y = x->parent;
-			while (y != _nil && x == y->left)
+			while (y != NULL && x == y->left)
 			{
 				x = y;
 				y = y->parent;
 			}
 			if (!y)
-				return _nil;
+				return NULL;
 			return y;
 		}
 
