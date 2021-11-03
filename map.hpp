@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 16:09:38 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/02 17:13:22 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/03 14:12:57 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,11 @@ namespace ft
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()): _comp(comp), _alloc(alloc), _tree(), _size(0)
 		{
-			std::cout << "oko" << std::endl;
 			insert(first, last);
 		}
-		map(const map &x): _comp(x._comp), _alloc(x._alloc), _tree(), _size(0)
+		map(const map &x): _comp(x._comp), _alloc(x._alloc), _size(0)
 		{
-			*this = x;
+			insert(x.begin(), x.end());
 		}
 		virtual ~map() {}
 
@@ -79,7 +78,9 @@ namespace ft
 			if (this == &x)
 				return (*this);
 			if (_tree.getRoot() != NULL)
+			{
 				clear();
+			}
 			this->_comp = x._comp;
 			this->_alloc = x._alloc;
 			insert(x.begin(), x.end());
@@ -88,12 +89,12 @@ namespace ft
 
 		iterator begin()
 		{
-			return iterator(_tree.minimum(_tree.getRoot()), _tree.getRoot(), _tree.getNil());
+			return iterator(_tree.minimum(), _tree.getRoot(), _tree.getNil());
 		}
 
 		const_iterator begin() const
 		{
-			return const_iterator(_tree.minimum(_tree.getRoot()), _tree.getRoot(), _tree.getNil());
+			return const_iterator(_tree.minimum(), _tree.getRoot(), _tree.getNil());
 		}
 
 		iterator end()
@@ -167,21 +168,20 @@ namespace ft
 
 		ft::pair<iterator,bool> insert(const value_type &val)
 		{
-			std::cout << "oko" << std::endl;
 			iterator it = find(val.first);
-			std::cout << "oko" << std::endl;
-
-			if (it )// != end())
+			if (it != end())
 			{
-				std::cout << "oko" << std::endl;
-				return ft::pair<iterator,bool>(end(), false);
-				//return (ft::pair<iterator,bool>(it, false));
+				return ft::pair<iterator,bool>(it, false);
 			}
 			else
 			{
-				std::cout << "oko" << std::endl;
-				it = iterator(_tree.insertNode(val, _tree.getRoot()), _tree.getRoot(), _tree.getNil());
+				std::cout << "caca5" << std::endl;
+				node_ptr node = _tree.insertNode(val, _tree.getRoot());
+				std::cout << "caca6" << std::endl;
+				it = iterator(node, _tree.getRoot(), _tree.getNil());
+				std::cout << "caca7" << std::endl;
 				this->_size++;
+				std::cout << "caca8" << std::endl;
 				return (ft::pair<iterator,bool>(it, true));
 			}
 		}
@@ -203,12 +203,12 @@ namespace ft
 		template <class InputIterator>
 		void insert(InputIterator first, InputIterator last)
 		{
-			std::cout << "oko" << std::endl;
 			int i = 0;
 			while (first != last)
 			{
-				std::cout << i++ << std::endl;
+				std::cout << "check = " << i << std::endl;
 				insert(*first++); // first here is a bidirectional_iterator which has an * overload so *first = first._ptr->_data which is a pair in map so a value_type
+				std::cout << "i = " << i++ << std::endl;
 			}
 		}
 
@@ -220,7 +220,12 @@ namespace ft
 
 		iterator find(const key_type &k)
 		{
-			return iterator(_tree.searchTree(k), _tree.getRoot(), _tree.getNil());
+			node_ptr tmp = _tree.searchTree(k);
+			if (tmp == NULL)
+			{
+				return (end());
+			}
+			return iterator(tmp, _tree.getRoot(), _tree.getNil());
 		}
 
 		const_iterator find(const key_type &k) const
@@ -231,7 +236,7 @@ namespace ft
 		void clear()
 		{
 			_tree.clear_helper(_tree.getRoot());
-			this->_size = _tree.getSize();
+			this->_size = 0;
 		}
 
 

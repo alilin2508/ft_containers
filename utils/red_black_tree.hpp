@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/02 16:53:59 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/03 14:10:45 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,34 @@ namespace ft
 		}
 
 		// find the node with the minimum key
+		node_ptr minimum() const
+		{
+			node_ptr node = _root;
+
+			if (this->_size == 0)
+				return NULL;
+			while (node->left != _nil)
+				node = node->left;
+			return node;
+		}
+
+		// find the node with the maximum key
+		node_ptr maximum() const
+		{
+			node_ptr node = _root;
+
+			if (this->_size == 0)
+				return NULL;
+			while (node->right != _nil)
+				node = node->right;
+			return node;
+		}
+
+		// find the node with the minimum key
 		node_ptr minimum(node_ptr node) const
 		{
+			if (this->_size == 0)
+				return NULL;
 			while (node->left != _nil)
 				node = node->left;
 			return node;
@@ -106,6 +132,8 @@ namespace ft
 		// find the node with the maximum key
 		node_ptr maximum(node_ptr node) const
 		{
+			if (this->_size == 0)
+				return NULL;
 			while (node->right != _nil)
 				node = node->right;
 			return node;
@@ -153,9 +181,9 @@ namespace ft
 		{
 		// init node with those values
 		// node->data = data;
-		// node->parent = nullptr;
-		// node->left = TNULL;
-		// node->right = TNULL;
+		// node->parent = null;
+		// node->left = nil;
+		// node->right = nil;
 		// node->color = red;
 		// new node must be red
 
@@ -183,7 +211,7 @@ namespace ft
 				y->right = node;
 			this->_size++;
 			// if new node is a root node, simply return
-			if (node->parent == NULL)
+			if (y == NULL)
 			{
 				node->_color = black;
 				return (this->_root);
@@ -200,7 +228,7 @@ namespace ft
 
 		void deleteNode(key_type key)
 		{
-			deleteNodeHelper(this->_root, key);
+			deleteNodeHelper(key);
 		}
 
 		// search the tree for the key k and return the corresponding node
@@ -244,6 +272,12 @@ namespace ft
 			return y;
 		}
 
+		void clear_h(node_ptr const &node)
+		{
+			clear_helper(node);
+			this->_root = _nil;
+		}
+
 		void clear_helper(node_ptr const &node)
 		{
 			// Base case of recursion
@@ -258,15 +292,6 @@ namespace ft
 			_alloc.destroy(node);
 			_alloc.deallocate(node, 1);
 			_size--;
-		}
-
-		node_ptr searchTreeHelper(node_ptr node, key_type key)
-		{
-			if (node == _nil || key == get_key_from_val(node->data))
-				return node;
-			if (key < get_key_from_val(node->data))
-				return searchTreeHelper(node->left, key);
-			return searchTreeHelper(node->right, key);
 		}
 
 		void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs) // lhs = rhs
@@ -299,8 +324,12 @@ namespace ft
 		void fixInsert(node_ptr z)
 		{
 			node_ptr u;
-			while (z->parent->_color == red)
+			std::cout << "proute" << std::endl;
+			if (z->parent->_color == black)
+				return ;
+			while (z->parent->_color == red && z->parent->parent != _root)
 			{
+				std::cout << "proute" << std::endl;
 				if (z->parent == z->parent->parent->right) // parent is gp's right child
 				{
 					u = z->parent->parent->left; // uncle is left
@@ -348,12 +377,13 @@ namespace ft
 						right_rotate(z->parent->parent);
 					}
 				}
-				if (z == _root)
-				{
-					break;
-				}
+				// if (z == _root)
+				// {
+				// 	break;
+				// }
 			}
 			_root->_color = black; // root is black
+			std::cout << "proute2" << std::endl;
 		}
 
 		void rbTransplant(node_ptr u, node_ptr v) // replaces u by v
@@ -441,21 +471,12 @@ namespace ft
 			x->_color = black; // root is black
 		}
 
-		void deleteNodeHelper(node_ptr node, key_type key)
+		void deleteNodeHelper(key_type key)
 		{
 			// find the node containing key
-			node_ptr z = NULL;
-			node_ptr x, y;
-			while (node != NULL)
-			{
-				if (get_key_from_val(node->data) == key)
-					z = node;
-				if (get_key_from_val(node->data) <= key)
-					node = node->right;
-			 	else
-					node = node->left;
-			}
+			node_ptr z, x, y;
 
+			z = searchTree(key);
 			if (z == NULL)
 			{
 				std::cout << "Couldn't find key in the tree" << std::endl;
@@ -497,6 +518,18 @@ namespace ft
 			_size--;
 			if (y_og_color == black) // fix the lost black color on x
 				fixDelete(x);
+		}
+
+		node_ptr searchTreeHelper(node_ptr node, key_type key)
+		{
+			if (node == _nil)
+				return NULL;
+			if (key == get_key_from_val(node->data))
+				return node;
+			if (_comp(key, get_key_from_val(node->data)))
+				return searchTreeHelper(node->left, key);
+			else
+				return searchTreeHelper(node->right, key);
 		}
 	};
 }

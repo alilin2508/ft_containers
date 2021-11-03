@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:20:14 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/02 16:41:23 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/03 14:16:33 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,16 @@ namespace ft
 		typedef node_type* node_ptr;
 		typedef std::bidirectional_iterator_tag iterator_category;
 
-		bidirectional_iterator() :  _root(NULL), _nil(NULL), _ptr(NULL) {}
-		bidirectional_iterator(node_ptr ptr, node_ptr root, node_ptr nil) : _root(root), _nil(nil), _ptr(ptr) {}
-		bidirectional_iterator(bidirectional_iterator const &lhs) : _root(lhs._root), _nil(lhs._nil), _ptr(lhs._ptr) {}
+		bidirectional_iterator() : _ptr(NULL), _root(NULL), _nil(NULL) {}
+		bidirectional_iterator(node_ptr ptr, node_ptr root, node_ptr nil) : _ptr(ptr), _root(root), _nil(nil) {}
+		bidirectional_iterator(bidirectional_iterator const &lhs) : _ptr(lhs._ptr), _root(lhs._root), _nil(lhs._nil) {}
 		bidirectional_iterator &operator=(bidirectional_iterator const &lhs)
 		{
 			if (this == &lhs)
 				return (*this);
-			_ptr = lhs._ptr;
-			_root = lhs._root;
-			_nil = lhs._nil;
+			this->_ptr = lhs._ptr;
+			this->_root = lhs._root;
+			this->_nil = lhs._nil;
 			return (*this);
 		}
 		virtual ~bidirectional_iterator() {}
@@ -125,16 +125,26 @@ namespace ft
 			return (tmp);
 		}
 
-		node_ptr getPtr()
+		node_ptr getPtr() const
 		{
 			return (this->_ptr);
 		}
 
+		node_ptr getRoot() const
+		{
+			return (this->_root);
+		}
+
+		node_ptr getNil() const
+		{
+			return (this->_nil);
+		}
+
 	protected:
 
+		node_ptr _ptr;
 		node_ptr _root;
 		node_ptr _nil;
-		node_ptr _ptr;
 
 		// find the node with the minimum key
 		node_ptr minimum(node_ptr node)
@@ -162,11 +172,13 @@ namespace ft
 			}
 			// else it is the lowest ancestor of x whose left child is also an ancestor of x
 			node_ptr y = x->parent;
-			while (y != _nil && x == y->right)
+			while (y != NULL && x == y->right)
 			{
 				x = y;
 				y = y->parent;
 			}
+			if (!y)
+				return _nil;
 			return y;
 		}
 
@@ -179,11 +191,13 @@ namespace ft
 				return maximum(x->left);
 			}
 			node_ptr y = x->parent;
-			while (y != _nil && x == y->left)
+			while (y != NULL && x == y->left)
 			{
 				x = y;
 				y = y->parent;
 			}
+			if (!y)
+				return _nil;
 			return y;
 		}
 	};
