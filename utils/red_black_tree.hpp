@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/03 14:10:45 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/03 16:29:37 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,6 +252,8 @@ namespace ft
 				x = y;
 				y = y->parent;
 			}
+			if (!y)
+				return _nil;
 			return y;
 		}
 
@@ -269,6 +271,8 @@ namespace ft
 				x = y;
 				y = y->parent;
 			}
+			if (!y)
+				return _nil;
 			return y;
 		}
 
@@ -316,7 +320,7 @@ namespace ft
 		allocator_type _alloc;
 		size_type _size;
 
-		key_type get_key_from_val(const value_type &val)
+		key_type get_key_from_val(const value_type &val) const
 		{
 			return (val.first);
 		}
@@ -324,12 +328,8 @@ namespace ft
 		void fixInsert(node_ptr z)
 		{
 			node_ptr u;
-			std::cout << "proute" << std::endl;
-			if (z->parent->_color == black)
-				return ;
-			while (z->parent->_color == red && z->parent->parent != _root)
+			while (z->parent->_color == red)
 			{
-				std::cout << "proute" << std::endl;
 				if (z->parent == z->parent->parent->right) // parent is gp's right child
 				{
 					u = z->parent->parent->left; // uncle is left
@@ -377,13 +377,12 @@ namespace ft
 						right_rotate(z->parent->parent);
 					}
 				}
-				// if (z == _root)
-				// {
-				// 	break;
-				// }
+				if (z == _root)
+				{
+					break;
+				}
 			}
 			_root->_color = black; // root is black
-			std::cout << "proute2" << std::endl;
 		}
 
 		void rbTransplant(node_ptr u, node_ptr v) // replaces u by v
@@ -520,16 +519,15 @@ namespace ft
 				fixDelete(x);
 		}
 
-		node_ptr searchTreeHelper(node_ptr node, key_type key)
+		node_ptr searchTreeHelper(node_ptr node, key_type key) const
 		{
 			if (node == _nil)
 				return NULL;
 			if (key == get_key_from_val(node->data))
 				return node;
-			if (_comp(key, get_key_from_val(node->data)))
+			if (key < get_key_from_val(node->data))
 				return searchTreeHelper(node->left, key);
-			else
-				return searchTreeHelper(node->right, key);
+			return searchTreeHelper(node->right, key);
 		}
 	};
 }

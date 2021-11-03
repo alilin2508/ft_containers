@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 16:09:38 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/03 14:12:57 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/03 16:25:45 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ namespace ft
 		{
 			if (this == &x)
 				return (*this);
-			if (_tree.getRoot() != NULL)
+			if (_tree.getRoot() != _tree.getNil())
 			{
 				clear();
 			}
@@ -175,13 +175,9 @@ namespace ft
 			}
 			else
 			{
-				std::cout << "caca5" << std::endl;
 				node_ptr node = _tree.insertNode(val, _tree.getRoot());
-				std::cout << "caca6" << std::endl;
 				it = iterator(node, _tree.getRoot(), _tree.getNil());
-				std::cout << "caca7" << std::endl;
 				this->_size++;
-				std::cout << "caca8" << std::endl;
 				return (ft::pair<iterator,bool>(it, true));
 			}
 		}
@@ -206,9 +202,8 @@ namespace ft
 			int i = 0;
 			while (first != last)
 			{
-				std::cout << "check = " << i << std::endl;
 				insert(*first++); // first here is a bidirectional_iterator which has an * overload so *first = first._ptr->_data which is a pair in map so a value_type
-				std::cout << "i = " << i++ << std::endl;
+				std::cout << "i = " << i << std::endl;
 			}
 		}
 
@@ -230,13 +225,17 @@ namespace ft
 
 		const_iterator find(const key_type &k) const
 		{
-			return const_iterator(_tree.searchTree(k), _tree.getRoot(), _tree.getNil());
+			node_ptr tmp = _tree.searchTree(k);
+			if (tmp == NULL)
+			{
+				return (end());
+			}
+			return const_iterator(tmp, _tree.getRoot(), _tree.getNil());
 		}
 
 		void clear()
 		{
-			_tree.clear_helper(_tree.getRoot());
-			this->_size = 0;
+			_tree.clear_h(_tree.getRoot());
 		}
 
 
