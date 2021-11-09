@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/03 17:18:12 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/09 17:00:53 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,6 @@ namespace ft
 			_root = _nil;
 		}
 
-		// RBtree(RBtree const &other): _root(NULL), _nil(NULL), _comp(other._comp), _alloc(other._alloc), _size(0)
-		// {
-		// 	_nil = _alloc.allocate(1);
-		// 	_alloc.construct(_nil, node_type(value_type(), NULL, NULL, NULL, black));
-		// 	_root = _nil;
-		// 	*this = other;
-		// }
-
 		virtual ~RBtree()
 		{
 			clear_h(_root);
@@ -94,13 +86,17 @@ namespace ft
 			return (this->_size);
 		}
 
+		size_type max_size() const
+		{
+			return (_alloc.max_size());
+		}
+
 		// find the node with the minimum key
 		node_ptr minimum() const
 		{
 			node_ptr node = _root;
-
-			if (this->_size == 0)
-				return _nil;
+			if (node == _nil)
+				return _root;
 			while (node->left != _nil)
 				node = node->left;
 			return node;
@@ -110,9 +106,8 @@ namespace ft
 		node_ptr maximum() const
 		{
 			node_ptr node = _root;
-
-			if (this->_size == 0)
-				return _nil;
+			if (node == _nil)
+				return _root;
 			while (node->right != _nil)
 				node = node->right;
 			return node;
@@ -121,8 +116,8 @@ namespace ft
 		// find the node with the minimum key
 		node_ptr minimum(node_ptr node) const
 		{
-			if (this->_size == 0)
-				return _nil;
+			if (node == _nil)
+				return _root;
 			while (node->left != _nil)
 				node = node->left;
 			return node;
@@ -131,8 +126,8 @@ namespace ft
 		// find the node with the maximum key
 		node_ptr maximum(node_ptr node) const
 		{
-			if (this->_size == 0)
-				return _nil;
+			if (node == _nil)
+				return _root;
 			while (node->right != _nil)
 				node = node->right;
 			return node;
@@ -145,7 +140,6 @@ namespace ft
 			x->right = y->left; // x's new right child is y's old left child
 			if (y->left != _nil) // if y->left isn't NULL
 				y->left->parent = x;
-
 			y->parent = x->parent; // y is new x so it takes old x's parent
 			if (x->parent == NULL)
 				this->_root = y;
@@ -164,7 +158,6 @@ namespace ft
 			x->left = y->right;
 			if (y->right != _nil)
 				y->right->parent = x;
-
 			y->parent = x->parent;
 			if (x->parent == NULL)
 				this->_root = y;
@@ -176,7 +169,7 @@ namespace ft
 			x->parent = y;
 		}
 
-		node_ptr insertNode(const value_type &data, node_ptr hint)
+		node_ptr insertNode(const value_type &data)
 		{
 		// init node with those values
 		// node->data = data;
@@ -191,15 +184,21 @@ namespace ft
 			_alloc.construct(node, node_type(data, NULL, _nil, _nil, red));
 
 			node_ptr y = NULL;
-			node_ptr x = hint;
+			node_ptr x = this->_root;
 
 			while (x != _nil) // find node's natural placement
 			{
 				y = x;
 				if (_comp(get_key_from_val(node->data), get_key_from_val(x->data)))
 					x = x->left;
-				else
+				else if (_comp(get_key_from_val(x->data), get_key_from_val(node->data)))
 					x = x->right;
+				else
+				{
+					_alloc.destroy(node);
+					_alloc.deallocate(node, 1);
+					return _nil;
+				}
 			}
 			node->parent = y;
 			if (y == NULL)
@@ -225,13 +224,13 @@ namespace ft
 			return (node);
 		}
 
-		void deleteNode(key_type key)
+		bool deleteNode(key_type key)
 		{
-			deleteNodeHelper(key);
+			return (deleteNodeHelper(key));
 		}
 
 		// search the tree for the key k and return the corresponding node
-		node_ptr searchTree(key_type k)
+		node_ptr searchTree(key_type k) const
 		{
 			return searchTreeHelper(this->_root, k);
 		}
@@ -242,7 +241,6 @@ namespace ft
 			// if the right subtree is not null the successor is the leftmost node in the sright subtree
 			if (x->right != _nil)
 			{
-				std::cout << "proute" << std::endl;
 				return minimum(x->right);
 			}
 			// else it is the lowest ancestor of x whose left child is also an ancestor of x
@@ -252,8 +250,6 @@ namespace ft
 				x = y;
 				y = y->parent;
 			}
-			if (!y)
-				return NULL;
 			return y;
 		}
 
@@ -271,8 +267,6 @@ namespace ft
 				x = y;
 				y = y->parent;
 			}
-			if (!y)
-				return NULL;
 			return y;
 		}
 
@@ -298,19 +292,34 @@ namespace ft
 			_size--;
 		}
 
-		void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs) // lhs = rhs
+		void swap(RBtree& x)
 		{
-			if (rhs == nil_rhs)
-			{
-				lhs = _nil;
-				return;
-			}
-			lhs = _alloc.allocate(1);
-			_alloc.construct(lhs, *rhs);
-			lhs->parent = parent; // Parent is the previously created node pased as argument
-			copy_helper(lhs->left, rhs->left, lhs, nil_rhs);
-			copy_helper(lhs->right, rhs->right, lhs, nil_rhs);
+			node_ptr		tmp_root = _root;
+			this->_root = x._root;
+			x._root = tmp_root;
+
+			node_ptr		tmp_nil = _nil;
+			this->_nil = x._nil;
+			x._nil = tmp_nil;
+
+			size_type		tmp_size = _size;
+			this->_size = x._size;
+			x._size = tmp_size;
 		}
+
+		// void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs) // lhs = rhs
+		// {
+		// 	if (rhs == nil_rhs)
+		// 	{
+		// 		lhs = _nil;
+		// 		return;
+		// 	}
+		// 	lhs = _alloc.allocate(1);
+		// 	_alloc.construct(lhs, *rhs);
+		// 	lhs->parent = parent; // Parent is the previously created node pased as argument
+		// 	copy_helper(lhs->left, rhs->left, lhs, nil_rhs);
+		// 	copy_helper(lhs->right, rhs->right, lhs, nil_rhs);
+		// }
 
 	protected:
 
@@ -400,6 +409,7 @@ namespace ft
 		void fixDelete(node_ptr x)
 		{
 			node_ptr w;
+
 			while (x != this->_root && x->_color == black)
 			{
 				if (x == x->parent->left) // if x is the left child
@@ -409,7 +419,7 @@ namespace ft
 					{
 						w->_color = black;
 						x->parent->_color = red;
-						leftRotate(x->parent); // new parent is w, old parent p became w's left child, p is still x's parent and x->parent->right bacame old w->left
+						left_rotate(x->parent); // new parent is w, old parent p became w's left child, p is still x's parent and x->parent->right bacame old w->left
 						w = x->parent->right;
 					}
 
@@ -424,13 +434,13 @@ namespace ft
 						{
 							w->left->_color = black;
 							w->_color = red;
-							rightRotate(x);
+							right_rotate(w);
 							w = x->parent->right;
 						}
 						w->_color = x->parent->_color;
 						x->parent->_color = black;
 						w->right->_color = black;
-						leftRotate(x->parent);
+						left_rotate(x->parent);
 						x = _root;
 					}
 				}
@@ -441,7 +451,7 @@ namespace ft
 					{
 						w->_color = black;
 						x->parent->_color = red;
-						rightRotate(x->parent);
+						right_rotate(x->parent);
 						w = x->parent->left;
 					}
 
@@ -456,13 +466,13 @@ namespace ft
 						{
 							w->right->_color = black;
 							w->_color = red;
-							leftRotate(x);
+							left_rotate(w);
 							w = x->parent->left;
 						}
 						w->_color = x->parent->_color;
 						x->parent->_color = black;
 						w->left->_color = black;
-						rightRotate(x->parent);
+						right_rotate(x->parent);
 						x = _root;
 					}
 				}
@@ -470,26 +480,23 @@ namespace ft
 			x->_color = black; // root is black
 		}
 
-		void deleteNodeHelper(key_type key)
+		bool deleteNodeHelper(key_type key)
 		{
 			// find the node containing key
 			node_ptr z, x, y;
 
 			z = searchTree(key);
-			if (z == NULL)
-			{
-				std::cout << "Couldn't find key in the tree" << std::endl;
-				return;
-			}
+			if (z == _nil)
+				return false;
 
 			y = z; // y saves the suppressed node's placement
 			color y_og_color = y->_color;
-			if (z->left == NULL) // z only had 1 child whitch is the right one so so it get's replaced by it's child
+			if (z->left == _nil) // z only had 1 child whitch is the right one so so it get's replaced by it's child
 			{
 				x = z->right; // x saves the right child's branch
 				rbTransplant(z, z->right);
 			}
-			else if (z->right == NULL) //mirror case
+			else if (z->right == _nil) //mirror case
 			{
 				x = z->left;
 				rbTransplant(z, z->left);
@@ -517,17 +524,22 @@ namespace ft
 			_size--;
 			if (y_og_color == black) // fix the lost black color on x
 				fixDelete(x);
+			return true;
 		}
 
 		node_ptr searchTreeHelper(node_ptr node, key_type key) const
 		{
 			if (node == _nil)
-				return NULL;
+				return _nil;
 			if (key == get_key_from_val(node->data))
 				return node;
-			if (key < get_key_from_val(node->data))
-				return searchTreeHelper(node->left, key);
-			return searchTreeHelper(node->right, key);
+			if (node != _nil)
+			{
+				if (_comp(key, get_key_from_val(node->data)))
+					return searchTreeHelper(node->left, key);
+				return searchTreeHelper(node->right, key);
+			}
+			return _nil;
 		}
 	};
 }

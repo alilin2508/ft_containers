@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:20:14 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/03 17:19:28 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/09 15:58:55 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ namespace ft
 				x = y;
 				y = y->parent;
 			}
-			if (!y)
+			if (y == NULL)
 				return _nil;
 			return y;
 		}
@@ -186,23 +186,9 @@ namespace ft
 				x = y;
 				y = y->parent;
 			}
-			if (!y)
-				return _nil;
 			return y;
 		}
 	};
-
-	// template<class Iterator>
-	// bool operator==(ft::bidirectional_iterator<Iterator, ft::Node<Iterator> > const &lhs, ft::bidirectional_iterator<Iterator, ft::Node<Iterator> > const &rhs)
-	// {
-	// 	return (lhs._ptr == rhs._ptr);
-	// }
-	//
-	// template<class Iterator>
-	// bool operator!=(ft::bidirectional_iterator<Iterator, ft::Node<Iterator> > const &lhs, ft::bidirectional_iterator<Iterator, ft::Node<Iterator> > const &rhs)
-	// {
-	// 	return (lhs._ptr != rhs._ptr);
-	// }
 
 	template<class Iterator, class Iter>
 	bool operator==(ft::bidirectional_iterator<Iterator, ft::Node<Iterator> > const &lhs, ft::bidirectional_iterator<Iter, ft::Node<Iter> > const &rhs)
