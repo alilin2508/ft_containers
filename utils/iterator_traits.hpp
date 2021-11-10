@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 11:30:58 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/22 16:18:53 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/10 15:37:44 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,6 @@
 
 namespace ft
 {
-	// struct input_iterator_tag {};
-	// struct output_iterator_tag {};
-	// struct forward_iterator_tag : public input_iterator_tag {};
-	// struct bidirectional_iterator_tag : public forward_iterator_tag {};
-	// struct random_access_iterator_tag : public bidirectional_iterator_tag {};
-
 	template<class Iter>
 	class iterator_traits
 	{

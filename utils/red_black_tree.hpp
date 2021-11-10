@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:51:15 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/09 17:00:53 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/10 15:59:17 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ namespace ft
 		Node(value_type data, Node* parent, Node* left, Node* right, color clr): data(data), parent(parent), left(left), right(right), _color(clr) {}
 	};
 
-	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<Node<T> > >
+	template <class Key, class T, class get_key_from_val, class Compare = std::less<Key>, class Alloc = std::allocator<Node<T> > >
 	class RBtree
 	{
 	public:
@@ -189,9 +189,9 @@ namespace ft
 			while (x != _nil) // find node's natural placement
 			{
 				y = x;
-				if (_comp(get_key_from_val(node->data), get_key_from_val(x->data)))
+				if (_comp(get_key_from_val()(node->data), get_key_from_val()(x->data)))
 					x = x->left;
-				else if (_comp(get_key_from_val(x->data), get_key_from_val(node->data)))
+				else if (_comp(get_key_from_val()(x->data), get_key_from_val()(node->data)))
 					x = x->right;
 				else
 				{
@@ -203,7 +203,7 @@ namespace ft
 			node->parent = y;
 			if (y == NULL)
 				this->_root = node;
-			else if (_comp(get_key_from_val(node->data), get_key_from_val(y->data))) // place the new node at it's right placement
+			else if (_comp(get_key_from_val()(node->data), get_key_from_val()(y->data))) // place the new node at it's right placement
 				y->left = node;
 			else
 				y->right = node;
@@ -292,7 +292,7 @@ namespace ft
 			_size--;
 		}
 
-		void swap(RBtree& x)
+		void swap(RBtree &x)
 		{
 			node_ptr		tmp_root = _root;
 			this->_root = x._root;
@@ -307,20 +307,6 @@ namespace ft
 			x._size = tmp_size;
 		}
 
-		// void copy_helper(node_ptr &lhs, node_ptr rhs, node_ptr parent, node_ptr nil_rhs) // lhs = rhs
-		// {
-		// 	if (rhs == nil_rhs)
-		// 	{
-		// 		lhs = _nil;
-		// 		return;
-		// 	}
-		// 	lhs = _alloc.allocate(1);
-		// 	_alloc.construct(lhs, *rhs);
-		// 	lhs->parent = parent; // Parent is the previously created node pased as argument
-		// 	copy_helper(lhs->left, rhs->left, lhs, nil_rhs);
-		// 	copy_helper(lhs->right, rhs->right, lhs, nil_rhs);
-		// }
-
 	protected:
 
 		node_ptr _root;
@@ -328,11 +314,6 @@ namespace ft
 		key_compare _comp;
 		allocator_type _alloc;
 		size_type _size;
-
-		key_type get_key_from_val(const value_type &val) const
-		{
-			return (val.first);
-		}
 
 		void fixInsert(node_ptr z)
 		{
@@ -531,11 +512,11 @@ namespace ft
 		{
 			if (node == _nil)
 				return _nil;
-			if (key == get_key_from_val(node->data))
+			if (key == get_key_from_val()(node->data))
 				return node;
 			if (node != _nil)
 			{
-				if (_comp(key, get_key_from_val(node->data)))
+				if (_comp(key, get_key_from_val()(node->data)))
 					return searchTreeHelper(node->left, key);
 				return searchTreeHelper(node->right, key);
 			}

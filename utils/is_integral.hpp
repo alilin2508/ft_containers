@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 11:37:31 by alilin            #+#    #+#             */
-/*   Updated: 2021/09/21 14:23:03 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/10 14:39:33 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ namespace ft
 	template <> struct is_integral<char> { static const bool value = true; };
 	template <> struct is_integral<signed char> { static const bool value = true; };
 	template <> struct is_integral<unsigned char> { static const bool value = true; };
-	template <> struct is_integral<char16_t> { static const bool value = true; };
-	template <> struct is_integral<char32_t> { static const bool value = true; };
+	// template <> struct is_integral<char16_t> { static const bool value = true; };
+	// template <> struct is_integral<char32_t> { static const bool value = true; };
 	template <> struct is_integral<wchar_t> { static const bool value = true; };
 	template <> struct is_integral<short> { static const bool value = true; };
 	template <> struct is_integral<int> { static const bool value = true; };

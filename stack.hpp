@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 15:31:26 by alilin            #+#    #+#             */
-/*   Updated: 2021/10/21 15:32:00 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/10 16:05:34 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,6 @@ namespace ft
 		typedef std::size_t size_type;
 
 		explicit stack(const container_type &ctnr = container_type()) : c(ctnr) {}
-		stack(const stack &other): c(other.c) {}
-		stack &operator=(const stack &other)
-		{
-			c = other.c;
-			return (*this);
-		}
 		~stack() {}
 
 		bool empty() const
@@ -83,7 +77,7 @@ namespace ft
 		template <class U, class ctnr>
 	  friend bool operator>=(const stack<U,ctnr> &lhs, const stack<U,ctnr> &rhs);
 
-	private:
+	protected:
 
 		container_type c;
 	};
