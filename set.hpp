@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 14:44:55 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/11 14:27:32 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/11 16:33:28 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,24 +25,24 @@
 
 namespace ft
 {
-  template <class T, class Key>
-  struct get_key_from_val : public std::unary_function<T, Key>
-  {
-   	const Key &operator()(const T &x) const
-  	{
-  		return (x);
-  	}
-  };
+	template <class T, class Key>
+	struct get_key_from_val : public std::unary_function<T, Key>
+	{
+		const Key &operator()(const T &x) const
+		{
+			return (x);
+		}
+	};
 
-  template < class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
-  class set
+	template < class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
+	class set
 	{
 	public:
 
 		typedef T key_type;
 		typedef T value_type;
 		typedef Compare key_compare;
-    typedef Compare value_compare;
+		typedef Compare value_compare;
 		typedef Alloc allocator_type;
 		typedef typename allocator_type::reference reference;
 		typedef typename allocator_type::const_reference const_reference;
@@ -176,7 +176,7 @@ namespace ft
 			erase((*position)); // position is a bidirectional_iterator which has an * overload so *position = position._ptr->_data so position._ptr->_data.first is the key of value_type
 		}
 
-		size_type erase(const key_type &k)
+		size_type erase(const value_type &k)
 		{
 			if (_tree.deleteNode(k) == true)
 				return 1;
@@ -211,7 +211,7 @@ namespace ft
 			return (value_compare(this->_comp));
 		}
 
-		iterator find(const key_type &k)
+		iterator find(const value_type &k) const
 		{
 			node_ptr tmp = _tree.searchTree(k);
 			if (tmp == _tree.getNil())
@@ -219,15 +219,7 @@ namespace ft
 			return iterator(tmp, _tree.getRoot(), _tree.getNil());
 		}
 
-		const_iterator find(const key_type &k) const
-		{
-			node_ptr tmp = _tree.searchTree(k);
-			if (tmp == _tree.getNil())
-				return (end());
-			return const_iterator(tmp, _tree.getRoot(), _tree.getNil());
-		}
-
-		size_type count(const key_type& k) const
+		size_type count(const value_type &k) const
 		{
 			const_iterator beg = this->begin();
 			const_iterator end = this->end();
@@ -240,7 +232,7 @@ namespace ft
 			return (0);
 		}
 
-		iterator lower_bound(const key_type &k)
+		iterator lower_bound(const value_type &k) const
 		{
 			iterator beg = this->begin();
 			iterator end = this->end();
@@ -254,21 +246,7 @@ namespace ft
 			return (beg);
 		}
 
-		const_iterator lower_bound(const key_type& k) const
-		{
-			const_iterator beg = this->begin();
-			const_iterator end = this->end();
-
-			while (beg != end)
-			{
-				if (_comp((*beg), k) == false)
-					break;
-				beg++;
-			}
-			return (beg);
-		}
-
-		iterator upper_bound(const key_type& k)
+		iterator upper_bound(const value_type &k) const
 		{
 			iterator beg = this->begin();
 			iterator end = this->end();
@@ -282,26 +260,7 @@ namespace ft
 			return (beg);
 		}
 
-		const_iterator upper_bound(const key_type& k) const
-		{
-			const_iterator beg = this->begin();
-			const_iterator end = this->end();
-
-			while (beg != end)
-			{
-				if (_comp(k, (*beg)))
-					break;
-				beg++;
-			}
-			return (beg);
-		}
-
-		pair<const_iterator,const_iterator> equal_range(const key_type &k) const
-		{
-			return (ft::make_pair(this->lower_bound(k), this->upper_bound(k)));
-		}
-
-		pair<iterator,iterator> equal_range(const key_type &k)
+		pair<iterator,iterator> equal_range(const value_type &k) const
 		{
 			return (ft::make_pair(this->lower_bound(k), this->upper_bound(k)));
 		}

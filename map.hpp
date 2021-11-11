@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 16:09:38 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/11 14:27:23 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/11 16:34:43 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@
 namespace ft
 {
 	template <class T, class Key>
-	struct get_key_from_val : public std::unary_function<T, Key>
+	struct get_key : public std::unary_function<T, Key>
 	{
- 		const Key &operator()(const T &x) const
+		const Key &operator()(const T &x) const
 		{
 			return (x.first);
 		}
@@ -51,7 +51,7 @@ namespace ft
 		typedef typename allocator_type::difference_type difference_type;
 		typedef typename allocator_type::size_type size_type;
 
-		typedef ft::RBtree<key_type, value_type, get_key_from_val<value_type, key_type>, key_compare> tree_type;
+		typedef ft::RBtree<key_type, value_type, get_key<value_type, key_type>, key_compare> tree_type;
 		typedef Node<value_type> node_type;
 		typedef Node<value_type>* node_ptr;
 
