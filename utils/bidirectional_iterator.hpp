@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:20:14 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/09 15:58:55 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/11 14:42:41 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,11 +123,6 @@ namespace ft
 			bidirectional_iterator tmp(*this);
 			operator--();
 			return (tmp);
-		}
-
-		node_ptr getPtr() const
-		{
-			return (this->_ptr);
 		}
 
 	protected:
