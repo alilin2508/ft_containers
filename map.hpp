@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 16:09:38 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/10 15:23:45 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/11 14:27:23 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ namespace ft
 			return (x.first);
 		}
 	};
-	
+
 	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > >
 	class map
 	{
@@ -72,7 +72,7 @@ namespace ft
 		{
 			insert(x.begin(), x.end());
 		}
-		virtual ~map() {}
+		~map() {}
 
 		map &operator=(const map &x)
 		{

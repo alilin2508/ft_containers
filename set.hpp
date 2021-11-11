@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 14:44:55 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/10 15:43:29 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/11 14:27:32 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ namespace ft
 		{
 			insert(x.begin(), x.end());
 		}
-		virtual ~set() {}
+		~set() {}
 
 		set &operator=(const set &x)
 		{
