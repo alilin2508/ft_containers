@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/12 15:22:49 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/12 15:48:21 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/12 17:25:41 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,88 +42,88 @@ void print_size(ft::set<char> set, std::string name)
 
 void test_set()
 {
-	print_title("CONSTRUCTOR", "ft::set");
+	print_title("CONSTRUCTOR", "set");
 	ft::set<char> ft_set;
-	print_size(ft_set, "ft_set");
+	print_size(ft_set, "set");
 
 	char c = 'a';
 	for (int i = 1; i <= 13; i++, c++)
 	{
 		ft_set.insert(c);
 	}
-	print_set(ft_set, "ft_set");
-	print_size(ft_set, "ft_set");
+	print_set(ft_set, "set");
+	print_size(ft_set, "set");
 
-	print_title("RANGE", "ft::set");
+	print_title("RANGE", "set");
 	ft::set<char> ft_set_range(ft_set.begin(), ft_set.end());
-	print_size(ft_set_range, "ft_set_range");
-	print_set(ft_set_range, "ft_set_range");
+	print_size(ft_set_range, "set_range");
+	print_set(ft_set_range, "set_range");
 
-	print_title("COPY CONSTRUCTOR (copy of range)", "ft::set");
+	print_title("COPY CONSTRUCTOR (copy of range)", "set");
 	ft::set<char> ft_set_copy(ft_set_range);
-	print_size(ft_set_copy, "ft_set_copy");
-	print_set(ft_set_copy, "ft_set_copy");
+	print_size(ft_set_copy, "set_copy");
+	print_set(ft_set_copy, "set_copy");
 
 
-	print_title("ASSIGNATION OPERATOR", "ft::set");
+	print_title("ASSIGNATION OPERATOR", "set");
 	ft::set<char> ft_set_assignation;
 	ft_set_assignation = ft_set_copy;
-	print_size(ft_set_assignation, "ft_set_assignation");
-	print_set(ft_set_assignation, "ft_set_assignation");
+	print_size(ft_set_assignation, "set_assignation");
+	print_set(ft_set_assignation, "set_assignation");
 
 
 	print_title("ITERATORS TESTS");
-	std::cout << "ft_set (iterator): ";
+	std::cout << "set (iterator): ";
 	for (ft::set<char>::iterator it = ft_set.begin(); it != ft_set.end(); it++)
 		std::cout << *it << ", ";
 	std::cout << "\n" << std::endl;
-	std::cout << "ft_set (const_iterator): ";
+	std::cout << "set (const_iterator): ";
 	for (ft::set<char>::const_iterator it = ft_set.begin(); it != ft_set.end(); it++)
 		std::cout << *it << ", ";
 	std::cout << "\n" << std::endl;
-	std::cout << "ft_set (reverse_iterator): ";
+	std::cout << "set (reverse_iterator): ";
 	for (ft::set<char>::reverse_iterator rit = ft_set.rbegin(); rit != ft_set.rend(); rit++)
 		std::cout << *rit << ", ";
 	std::cout << "\n" << std::endl;
-	std::cout << "ft_set (const_reverse_iterator): ";
+	std::cout << "set (const_reverse_iterator): ";
 	for (ft::set<char>::const_reverse_iterator rit = ft_set.rbegin(); rit != ft_set.rend(); rit++)
 		std::cout << *rit << ", ";
 	std::cout << "\n" << std::endl;
 
 	print_title("ACCESSOR AND MEMBER FUNCTIONS", "size, max_size, empty");
-	print_size(ft_set, "ft_set");
+	print_size(ft_set, "set");
 
 	print_title("SET INSERT(val)");
 	for (int i = 14; i <= 19; i++, c++)
 	{
 		ft_set.insert(c);
 	}
-	print_set(ft_set, "ft_set");
-	print_size(ft_set, "ft_set");
+	print_set(ft_set, "set");
+	print_size(ft_set, "set");
 
 	print_title("SET INSERT(position, val)");
 	for (int i = 20; i <= 26; i++, c++)
 	{
 		ft_set.insert(c);
 	}
-	print_set(ft_set, "ft_set");
-	print_size(ft_set, "ft_set");
+	print_set(ft_set, "set");
+	print_size(ft_set, "set");
 
 	print_title("SET INSERT(first, last)", "set -> set_copy");
 	print_title("BEFORE INSERT");
-	print_set(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_copy, "set_copy");
 
 	print_title("AFTER INSERT");
 	ft_set_copy.insert(ft_set.begin(), ft_set.end());
-	print_set(ft_set_copy, "ft_set_copy");
-	print_size(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_copy, "set_copy");
+	print_size(ft_set_copy, "set_copy");
 
 	print_title("SET ERASE(position)", "erasing first half of set_copy");
 	ft::set<char>::iterator std_it_half = ft_set_copy.find('n');
 	for (ft::set<char>::iterator it = ft_set_copy.begin(); it != std_it_half; it++)
 		ft_set_copy.erase(it);
-	print_set(ft_set_copy, "ft_set_copy");
-	print_size(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_copy, "set_copy");
+	print_size(ft_set_copy, "set_copy");
 
 	print_title("SET ERASE(key)", "erasing another half of set_copy");
 	c = 'n';
@@ -131,31 +131,31 @@ void test_set()
 	{
 		ft_set_copy.erase(c);
 	}
-	print_set(ft_set_copy, "ft_set_copy");
-	print_size(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_copy, "set_copy");
+	print_size(ft_set_copy, "set_copy");
 
 	print_title("SET ERASE(first, last)", "finishing the job set_copy");
 	ft_set_copy.erase(ft_set_copy.begin(), ft_set_copy.end());
-	print_set(ft_set_copy, "ft_set_copy");
-	print_size(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_copy, "set_copy");
+	print_size(ft_set_copy, "set_copy");
 
 	print_title("SET SWAP() (MEMBER)", "swaping set_range and set_copy");
 	print_title("BEFORE SWAP");
-	print_set(ft_set_range, "ft_set_range");
-	print_set(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_range, "set_range");
+	print_set(ft_set_copy, "set_copy");
 	ft_set_range.swap(ft_set_copy);
 	print_title("AFTER SWAP");
-	print_set(ft_set_range, "ft_set_range");
-	print_set(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_range, "set_range");
+	print_set(ft_set_copy, "set_copy");
 
 	print_title("SET CLEAR", "clearing set copy again");
 	print_title("BEFORE");
-	print_set(ft_set_copy, "ft_set_copy");
-	print_size(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_copy, "set_copy");
+	print_size(ft_set_copy, "set_copy");
 	ft_set_copy.clear();
 	print_title("AFTER");
-	print_set(ft_set_copy, "ft_set_copy");
-	print_size(ft_set_copy, "ft_set_copy");
+	print_set(ft_set_copy, "set_copy");
+	print_size(ft_set_copy, "set_copy");
 
 	print_title("SET FIND(key) const and non_const");
 	ft::set<char>::iterator find_a = ft_set.find('a');
@@ -166,21 +166,21 @@ void test_set()
 	print_title("SET COUNT(key)");
 	std::cout << 'a';
 	if (ft_set.count('a') > 0)
-		std::cout << " is an element of ft_set.\n";
+		std::cout << " is an element of set.\n";
 	else
-		std::cout << " is not an element of ft_set.\n";
+		std::cout << " is not an element of set.\n";
 	std::cout << '1';
 	if (ft_set.count('1') > 0)
-		std::cout << " is an element of ft_set.\n";
+		std::cout << " is an element of set.\n";
 	else
-		std::cout << " is not an element of ft_set.\n";
+		std::cout << " is not an element of set.\n";
 
 	print_title("SET LOWER_BOUND AND UPPER_BOUND", "using it to erase from b to g");
 	ft::set<char>::iterator itlow = ft_set.lower_bound('b');
 	ft::set<char>::iterator itup = ft_set.upper_bound('g');
 	ft_set.erase(itlow, itup);
-	print_set(ft_set, "ft_set");
-	print_size(ft_set, "ft_set");
+	print_set(ft_set, "set");
+	print_size(ft_set, "set");
 
 	print_title("SET EQUAL_RANGE", "for h");
 	ft::pair<ft::set<char>::iterator,ft::set<char>::iterator> ret;

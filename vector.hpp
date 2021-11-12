@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 13:20:46 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/10 14:40:43 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/12 17:05:47 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ namespace ft
 		void reserve(size_type n)
 		{
 			if (n > max_size())
-				throw std::length_error("reserve:: cannot increase _capacity beyond max_size");
+				throw std::length_error("allocator<T>::allocate(size_t n) 'n' exceeds maximum supported size");
 			if (n > _capacity)
 				realloc(n);
 		}
