@@ -7,10 +7,12 @@ CC			= clang++
 FLAGS		= -Wall -Wextra -Werror -std=c++98
 
 SRCS		= main.cpp \
-					test_map.cpp
+					test_map.cpp \
+					test_set.cpp
 
 STDSRCS	= main_std.cpp \
-					test_map_std.cpp
+					test_map_std.cpp \
+					test_set_std.cpp
 
 OBJS		= $(SRCS:.cpp=.o)
 

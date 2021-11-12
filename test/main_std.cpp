@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 15:48:20 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/11 16:13:58 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/12 15:26:44 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ int main()
 	print_header("MAP");
 	while (std::cin.get() != '\n') {}
 	test_map_std();
-	// print_header("SET");
-	// while (std::cin.get() != '\n') {}
-	// test_set_std();
+	print_header("SET");
+	while (std::cin.get() != '\n') {}
+	test_set_std();
 
 	return 0;
 }
