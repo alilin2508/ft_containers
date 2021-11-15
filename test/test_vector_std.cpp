@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/12 16:21:06 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/12 17:17:29 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/15 11:35:51 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,6 @@ void test_vector_std()
 	try
 	{
 		std_vector.reserve(std_vector.max_size() + 1);
-		// std_vector.reserve(4611686018427387904);
 	}
 	catch (std::exception &e)
 	{
@@ -132,6 +131,14 @@ void test_vector_std()
 
 	print_title("VECTOR RESERVE(50)");
 	std_vector.reserve(50);
+	print_size(std_vector, "vector");
+	print_vector(std_vector, "vector");
+	print_title("VECTOR RESERVE(45)");
+	std_vector.reserve(45);
+	print_size(std_vector, "vector");
+	print_vector(std_vector, "vector");
+	print_title("VECTOR RESERVE(30)");
+	std_vector.reserve(30);
 	print_size(std_vector, "vector");
 	print_vector(std_vector, "vector");
 
@@ -146,9 +153,11 @@ void test_vector_std()
 	try
 	{
 		std::cout << "vector : ";
-		print_size(std_vector, "vector");
+		// print_size(std_vector, "vector");
+		// for (size_t i = 0; i < std_vector.size() + 1; i++)
+		// 	std::cout << "i = " << i << " vector.at(i) = " << std_vector.at(i) << ", ";
 		for (size_t i = 0; i < std_vector.size() + 1; i++)
-			std::cout << "i = " << i << " vector.at(i) = " << std_vector.at(i) << ", ";
+			std::cout << std_vector.at(i) << ", ";
 		std::cout << std::endl;
 	}
 	catch (std::exception &e)

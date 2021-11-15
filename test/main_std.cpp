@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 15:48:20 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/12 16:47:00 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/15 12:43:57 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ int main()
 	std::cout << std::endl;
 	while (std::cin.get() != '\n') {}
 	test_vector_std();
-	// print_header("STACK");
-	// while (std::cin.get() != '\n') {}
-	// test_stack_std();
+	print_header("STACK");
+	while (std::cin.get() != '\n') {}
+	test_stack_std();
 	print_header("MAP");
 	while (std::cin.get() != '\n') {}
 	test_map_std();

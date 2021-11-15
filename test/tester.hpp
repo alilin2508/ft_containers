@@ -6,7 +6,7 @@
 /*   By: alilin <alilin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 15:49:01 by alilin            #+#    #+#             */
-/*   Updated: 2021/11/12 16:47:16 by alilin           ###   ########.fr       */
+/*   Updated: 2021/11/15 12:43:37 by alilin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@
 void print_title(std::string title, std::string subtitle = "");
 void test_vector();
 void test_vector_std();
-// void test_stack();
+void test_stack();
+void test_stack_std();
 void test_map();
 void test_map_std();
 void test_set();
